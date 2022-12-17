@@ -23,7 +23,7 @@ MathJax.Hub.Config({
         "HTML-CSS": { availableFonts: ["TeX"] }
       });
 //-----------------------------------------------------------------------
-  var board = JXG.JSXGraph.initBoard(divid, {boundingbox: [-20, 10, 20, -10], axis: false, showCopyright: false,showNavigation:false,pan:{enabled:false},zoom:{enabled:false},resize: {enabled:false}});
+  var board = JXG.JSXGraph.initBoard(divid, {boundingbox: [-25, 10, 25, -10], axis: false, showCopyright: false,showNavigation:false,pan:{enabled:false},zoom:{enabled:false},resize: {enabled:false}});
 
 
 var xp={#Axis_p#};
