@@ -138,7 +138,8 @@ t2=eqn.substring(indx+1);
 if (checkbox[j].Value())
 {eqn=t2+' ⟶ '+t1;factor=-1*i;temp=1} else {eqn=t1+' ⟶ '+t2;factor=i;temp=0};
 DHv[j]=DH[j]*factor;
-  return eqn+' '+getmark(j);
+  //return eqn+' '+getmark(j);
+  return eqn; //version 2
 }], {
   fontSize: fontsize,
   fixed: true,
@@ -236,7 +237,8 @@ var markC='<span style="font-size: 1.0em; color:green;"><i class="fa fa-check"><
 var markF='<span style="font-size: 1.0em; color:red;"><i class="fa fa-times"></i></span>';
  for (let j = 0; isless(j,jmax); j++){
   if  (answers[j]==correct[j]) {mark[j]=markC} else {mark[j]=markF};
-     t0=correct[j]*DH[j];
+     //t0=correct[j]*DH[j];
+     t0=answers[j]*DH[j]; //version 2
     temp2=Math.abs(eval(Einput[j].Value())-t0);
     if (isless(temp2,1)) {mark[j+jmax]=markC} else {mark[j+jmax]=markF};  
     ta=ta+t0;
