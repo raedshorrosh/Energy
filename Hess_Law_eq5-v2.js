@@ -19,8 +19,8 @@
  var checkAnswer=[];
  </script>
 [[jsxgraph  width="800px" height="400px"  input-ref-states='statesRef'  input-ref-ans1='DHtot'  input-ref-DHval1='DHst1' input-ref-DHval2='DHst2' input-ref-DHval3='DHst3' input-ref-DHval4='DHst4' input-ref-DHval5='DHst5']]
- JXG.Options.text.cssDefaultStyle = 'direction:ltr; font-family:Arial;';
-  JXG.Options.text.highlightCssDefaultStyle = 'direction:ltr';
+ JXG.Options.text.cssDefaultStyle += 'direction:ltr; font-family:Arial;';
+  JXG.Options.text.highlightCssDefaultStyle += 'direction:ltr;';
   let rqm={#rqm#};
 
 //board
@@ -173,6 +173,7 @@ txt=txt.replaceAll('+-','-');
 txt=txt.replaceAll('++','+');
 txt=txt.replaceAll('1⋅','');
 
+Einput[ii].Value()=Einput[ii].Value().replaceAll('−','-');//long minus sign en-dash
 
 
 try{  temp=eval(Einput[ii].Value());}
@@ -223,7 +224,6 @@ board.update();
 }, input[j]);
 
 JXG.addEvent(Einput[j].rendNodeInput, 'input', function() {
-  Einput[j].Value()=Einput[j].Value().replaceAll('−','-');//long minus sign en-dash
   board.update();  
     DHSt[j].value=Einput[j].Value();
 board.update();  
