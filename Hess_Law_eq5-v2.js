@@ -175,7 +175,7 @@ txt=txt.replaceAll('1⋅','');
 
 
 
-try{    temp=eval(Einput[ii].Value());temp=temp.replaceAll('−','-')}//fixing the long minuns signs en-dash 
+try{  temp=eval(Einput[ii].Value());}//fixing the long minuns signs en-dash 
 catch(e) {console.log(1);temp=0}
   tot= tot+temp ;
 }
@@ -223,6 +223,7 @@ board.update();
 }, input[j]);
 
 JXG.addEvent(Einput[j].rendNodeInput, 'input', function() {
+  Einput[j].Value()=Einput[j].Value().replaceAll('−','-');//long minus sign en-dash
     DHSt[j].value=Einput[j].Value();
 board.update();  
 }, Einput[j]);
