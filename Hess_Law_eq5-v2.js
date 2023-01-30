@@ -50,7 +50,7 @@ var getmark=function(n) {return mark[n]};
 
 // write top equation---------------
   var eqmap={#eqmap#}, tmp={#ceq0#},indx=eqmap.indexOf(0);
-  eqmap.splice(indx,1);
+//  eqmap.splice(indx,1);
   for (const x in tmp){
   tmp[x]=eqmap[x]+ncolors[x]+tmp[x]+btoken;
    }
