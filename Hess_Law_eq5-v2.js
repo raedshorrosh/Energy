@@ -175,7 +175,7 @@ txt=txt.replaceAll('1⋅','');
 
 
 
-try{    temp=eval(Einput[ii].Value());}
+try{    temp=eval(Einput[ii].Value());temp=temp.replaceAll('−','-')}//fixing the long minuns signs en-dash 
 catch(e) {console.log(1);temp=0}
   tot= tot+temp ;
 }
