@@ -252,7 +252,7 @@ var markF='<span style="font-size: 1.0em; color:red;"><i class="fa fa-times"></i
 if (isless(temp,3)) {mark[2*jmax]=markC} else {mark[2*jmax]=markF};
       
   
-board.update();
+board.update(); 
 };
 
 
