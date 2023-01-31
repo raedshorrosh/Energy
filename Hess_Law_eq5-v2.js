@@ -173,8 +173,6 @@ txt=txt.replaceAll('+-','-');
 txt=txt.replaceAll('++','+');
 txt=txt.replaceAll('1⋅','');
 
-Einput[ii].Value()=Einput[ii].Value().replaceAll('−','-');//long minus sign en-dash
-board.update();
 
 try{  temp=eval(Einput[ii].Value());}
 catch(e) {console.log(1);temp=0}
@@ -224,6 +222,7 @@ board.update();
 }, input[j]);
 
 JXG.addEvent(Einput[j].rendNodeInput, 'input', function() {
+  Einput[j].Value()=Einput[j].Value().replaceAll('−','-');//long minus sign en-dash
   board.update();  
     DHSt[j].value=Einput[j].Value();
 board.update();  
