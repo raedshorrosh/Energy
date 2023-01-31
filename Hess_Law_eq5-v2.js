@@ -222,9 +222,7 @@ board.update();
 }, input[j]);
 
 JXG.addEvent(Einput[j].rendNodeInput, 'input', function() {
-  Einput[j].Value()=Einput[j].Value().replaceAll('−','-');//long minus sign en-dash
-  board.update();  
-    DHSt[j].value=Einput[j].Value();
+DHSt[j].value=Einput[j].Value();
 board.update();  
 }, Einput[j]);
 
