@@ -238,7 +238,8 @@ board.create('text', [-2.75, top-2-jmax,function() {
  
 
 checkAnswer[rqm] =function() {
-var t0,ta=0;
+//var t0,ta=0; 
+var t0,ta={#ta#};  //version 2
 var temp2;
 var markC='<span style="font-size: 1.0em; color:green;"><i class="fa fa-check"></i></span>';
 var markF='<span style="font-size: 1.0em; color:red;"><i class="fa fa-times"></i></span>';
@@ -248,7 +249,7 @@ var markF='<span style="font-size: 1.0em; color:red;"><i class="fa fa-times"></i
      t0=answers[j]*DH[j]; //version 2
     temp2=Math.abs(eval(Einput[j].Value())-t0);
     if (isless(temp2,1)) {mark[j+jmax]=markC} else {mark[j+jmax]=markF};  
-    ta=ta+t0;
+   // ta=ta+t0; //version 2
     input[j].rendNodeTag.disabled=true;
     Einput[j].rendNodeTag.disabled=true;
     checkbox[j].rendNodeTag.disabled=true;
