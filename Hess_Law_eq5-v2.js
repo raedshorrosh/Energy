@@ -264,5 +264,3 @@ board.update();
 
 
 [[/jsxgraph]]
-
->>>>>>> 407fc815cd18fb2360c853e58710944ece6fe21f
