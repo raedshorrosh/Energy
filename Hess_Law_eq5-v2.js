@@ -1,28 +1,6 @@
-<script>
-  function isless(x,y) {return (x<y)};
-  function iand(x,y)  {return (x&&y)};
-  function igrt(x,y)  {return (x>y)};
-  function igrtq(x,y)  {return (x>=y)};
-  function ispositive(x) {return (x>0)};
-  function ibetween(a,x,y) {return ((a>x)&&(a<y))};
-  function dist(a,b){return Math.sqrt((a[0]-b[0])*(a[0]-b[0])+(a[1]-b[1])*(a[1]-b[1]))};
-  function indexOf2dArray(array2d, itemtofind) {
-           index = [].concat.apply([], ([].concat.apply([], array2d))).indexOf(itemtofind);
-           if (index === -1) { return false; }
-            numColumns = array2d[0].length;
-            row = parseInt(index / numColumns);
-            col = index % numColumns;
-        return [row, col]; 
-    }
-</script>
-<script type="text/javascript">
- var checkAnswer=[];
- </script>
-[[jsxgraph  width="800px" height="400px"  input-ref-states='statesRef'  input-ref-ans1='DHtot'  input-ref-DHval1='DHst1' input-ref-DHval2='DHst2' input-ref-DHval3='DHst3' input-ref-DHval4='DHst4' input-ref-DHval5='DHst5']]
- JXG.Options.text.cssDefaultStyle += 'direction:ltr; font-family:Arial;';
-  JXG.Options.text.highlightCssDefaultStyle += 'direction:ltr;';
-  let rqm={#rqm#};
 
+<<<<<<< HEAD
+=======
 //board
 var board = JXG.JSXGraph.initBoard(divid, {
   boundingbox: [-5, 5, 15, -5],
@@ -122,7 +100,7 @@ for (let j = 0;isless(j, jmax); j++) {
 //equation !!
 
 //eqx[j]=eqn;
- var curEq[j]=board.create('text', [-2.75, top-0.35-j,function(){
+ board.create('text', [-2.75, top-0.35-j,function(){
  eqn =eqx[j];
 
 var temp;
@@ -263,3 +241,5 @@ board.update();
 
 
 [[/jsxgraph]]
+
+>>>>>>> 407fc815cd18fb2360c853e58710944ece6fe21f
