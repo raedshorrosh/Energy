@@ -1,4 +1,3 @@
-//v2
 <script>
   function isless(x,y) {return (x<y)};
   function iand(x,y)  {return (x&&y)};
