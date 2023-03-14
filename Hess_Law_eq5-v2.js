@@ -122,7 +122,7 @@ for (let j = 0;isless(j, jmax); j++) {
 //equation !!
 
 //eqx[j]=eqn;
- board.create('text', [-2.75, top-0.35-j,function(){
+ var curEq[j]=board.create('text', [-2.75, top-0.35-j,function(){
  eqn =eqx[j];
 
 var temp;
@@ -228,6 +228,14 @@ board.update();
 
 
 }//for
+
+board.create('text', [-2.75, top-2-jmax,function() {
+  for (let j=0;isless(j,jmax);j++) {
+
+  }
+}
+]);
+ 
 
 checkAnswer[rqm] =function() {
 var t0,ta=0;
