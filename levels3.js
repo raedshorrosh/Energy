@@ -26,7 +26,7 @@ MathJax.Hub.Config({
   var board = JXG.JSXGraph.initBoard(divid, {boundingbox: [-25, 10, 25, -10], axis: false, showCopyright: false,showNavigation:false,pan:{enabled:false},zoom:{enabled:false},resize: {enabled:false}});
 
 
-var xp={#Axis_p#};
+var xp={#Axis_p#};ylable_p={#ylable_p#}
 //lines top and bottom and hidden
 
 var lineTop = board.create('segment', [[xp+1.0, {#top_line#}],[{#l_length#}+xp, {#top_line#}]], {strokeColor:'black',strokeWidth:3,fixed: true});
@@ -40,7 +40,7 @@ var lineBottom = board.create('segment', [[xp+1.0,{#top_line#}-{#gap#}-{#gap2#}]
 
 //axis arrow
  var e_axis= board.create('arrow',[[xp,-9.0],[xp,9.0]], {strokeColor:'black', strokeWidth:3, fixed:true});
- board.create('text',[xp-1,8,'{@enthalpy@}'],{fontSize: 20, color:'black', fixed: true,  display: 'internal',rotate: 90});
+ board.create('text',[xp-1,ylable_p,'{@enthalpy@}'],{fontSize: 20, color:'black', fixed: true,  display: 'internal',rotate: 90});
 
 //Reaction arrows
 //-------------------------------------------------------------------
