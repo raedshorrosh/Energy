@@ -26,7 +26,7 @@ MathJax.Hub.Config({
   var board = JXG.JSXGraph.initBoard(divid, {boundingbox: [-25, 10, 25, -10], axis: false, showCopyright: false,showNavigation:false,pan:{enabled:false},zoom:{enabled:false},resize: {enabled:false}});
 
 
-var xp={#Axis_p#};ylable_p={#ylable_p#}
+var xp={#Axis_p#};ylable_p={#ylable_p#};
 //lines top and bottom and hidden
 
 var lineTop = board.create('segment', [[xp+1.0, {#top_line#}],[{#l_length#}+xp, {#top_line#}]], {strokeColor:'black',strokeWidth:3,fixed: true});
