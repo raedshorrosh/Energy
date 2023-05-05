@@ -20,8 +20,8 @@
  </script>
 
 [[jsxgraph  width="800px" height="400px"  input-ref-states='statesRef'  input-ref-ans1='DHtot'  input-ref-DHval1='DHst1' input-ref-DHval2='DHst2' input-ref-DHval3='DHst3']]
- JXG.Options.text.cssDefaultStyle += 'direction:ltr; font-family:Arial;';
-  JXG.Options.text.highlightCssDefaultStyle += 'direction:ltr';
+ JXG.Options.text.cssDefaultStyle += ';direction:ltr; font-family:Arial;';
+  JXG.Options.text.highlightCssDefaultStyle += ';direction:ltr;';
   let rqm={#rqm#};
 
 //board
