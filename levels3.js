@@ -13,7 +13,7 @@ var nameRef ={txttop:{#txttop#}, txtmid:{#txtmid#},txtbot:{#txtbot#}, p:["","","
 //JXG.Options.point.snapSizeX = {#snapx#};
 JXG.Options.layer.text = 0;
 // initialize mathJax
-MathJax.Hub.Config({
+/*MathJax.Hub.Config({
         extensions: ["tex2jax.js","TeX/AMSmath.js","TeX/AMSsymbols.js"],
         jax: ["input/TeX", "output/HTML-CSS"],
         tex2jax: {
@@ -22,6 +22,7 @@ MathJax.Hub.Config({
         },
         "HTML-CSS": { availableFonts: ["TeX"] }
       });
+ */
 //-----------------------------------------------------------------------
   var board = JXG.JSXGraph.initBoard(divid, {boundingbox: [-25, 10, 25, -10], axis: false, showCopyright: false,showNavigation:false,pan:{enabled:false},zoom:{enabled:false},resize: {enabled:false}});
 
