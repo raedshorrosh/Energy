@@ -12,7 +12,7 @@
 JXG.Options.layer.text = 0;
 
 // initialize mathJax
- /* MathJax.Hub.Config({
+  MathJax.Hub.Config({
         extensions: ["tex2jax.js","TeX/AMSmath.js","TeX/AMSsymbols.js"],
         jax: ["input/TeX", "output/HTML-CSS"],
         tex2jax: {
@@ -21,7 +21,7 @@ JXG.Options.layer.text = 0;
         },
         "HTML-CSS": { availableFonts: ["TeX"] }
       });
-*/
+
 
 var nameRef ={reacttxt:{#reactxt#}, prodtxt:{#prodtxt#}, p:["",""],chkd:false};
 
