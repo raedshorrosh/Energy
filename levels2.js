@@ -53,7 +53,7 @@ board.on('move', function(){
 
 //reactans text
 // State represented as a JS-object, first define default then try loading the stored values.
-  var state = {'x':xp-12, 'y':2};
+  var state = {'x':xp-14, 'y':2};
   var stateInput = document.getElementById(stateRef5);
 
 if (stateInput.value!=( stateInput.value != '')) state = JSON.parse(stateInput.value);
@@ -69,7 +69,7 @@ var reactants=board.create('text',[state['x'],state['y'],function(){return nameR
   });
 
 //products
-  var state2 = {'x':xp-12, 'y':3};
+  var state2 = {'x':xp-14, 'y':4};
   var stateInput2 = document.getElementById(stateRef6);
   if (stateInput2.value !=(stateInput2.value != '')) {
     state2 = JSON.parse(stateInput2.value);
