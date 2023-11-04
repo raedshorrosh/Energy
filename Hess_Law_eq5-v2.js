@@ -113,7 +113,7 @@ for (let j = 0;isless(j, jmax); j++) {
  input[j] = board.create('input', [-4, top-j, '1',''], {
   cssStyle: 'width:40px;',
   fixed:true,
-  fontsize: fontsize
+  fontsize: fontsize*0.8
   });
 
 //checkboxes
