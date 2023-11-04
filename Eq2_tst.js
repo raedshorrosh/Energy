@@ -118,7 +118,7 @@ board.create('text',[-3.75,top+0.4,'✖'],{
 //multiplication input fields
 for (let j = 0;isless(j, jmax); j++) {
  input[j] = board.create('input', [-4, top-j, '1',''], {
-  cssStyle: 'width:80px;',
+  cssStyle: 'width:40px;',
   fixed:true,
   fontsize: fontsize*0.8
   });
