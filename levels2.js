@@ -9,6 +9,8 @@
 //snap grid for points in x
 //JXG.Options.point.snapToGrid = true;
 //JXG.Options.point.snapSizeX =  {#snapx#};
+JXG.Options.text.cssDefaultStyle += ';direction:ltr; font-family:Arial;';
+  JXG.Options.text.highlightCssDefaultStyle += ';direction:ltr;';
 JXG.Options.layer.text = 0;
 
 // initialize mathJax
