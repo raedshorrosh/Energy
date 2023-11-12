@@ -5,7 +5,10 @@
 [[jsxgraph width="600px" input-ref-ans1='ans1Ref'  input-ref-ans2='ans2Ref'  input-ref-ans3='ans3Ref' input-ref-ans4='ans4Ref'  input-ref-ans50='ans50Ref'  input-ref-ans51='ans51Ref'  input-ref-ans5='stateRef5'  input-ref-ans6='stateRef6'  input-ref-ans7='stateRef7']]
 
 var nameRef ={txttop:{#txttop#}, txtmid:{#txtmid#},txtbot:{#txtbot#}, p:["","","","","",""],chkd:false};
+JXG.Options.text.cssDefaultStyle += ';direction:ltr; font-family:Arial;';
+JXG.Options.text.highlightCssDefaultStyle += ';direction:ltr;';
 JXG.Options.layer.text = 0;
+
 
 //-----------------------------------------------------------------------
   var board = JXG.JSXGraph.initBoard(divid, {boundingbox: [-25, 10, 25, -10], axis: false, showCopyright: false,showNavigation:false,pan:{enabled:false},zoom:{enabled:false},resize: {enabled:false}});
@@ -24,7 +27,7 @@ var lineBottom = board.create('segment', [[xp+1.0,{#top_line#}-{#gap#}-{#gap2#}]
 
 //axis arrow
  var e_axis= board.create('arrow',[[xp,-9.0],[xp,9.0]], {strokeColor:'black', strokeWidth:3, fixed:true});
- board.create('text',[xp-1,ylable_p,'{@enthalpy@}'],{fontSize: 20, color:'black', fixed: true,  display: 'internal',rotate: 90});
+ board.create('text',[xp-1,ylable_p,'{@enthalpy@}'],{fontSize: 18, color:'black', fixed: true,  display: 'internal',rotate: 90});
 
 //Reaction arrows
 //-------------------------------------------------------------------
