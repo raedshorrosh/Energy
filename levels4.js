@@ -35,42 +35,33 @@ var a_arp1= board.create('point',[xp-13,0],{name:function(){return nameRef.p[0]}
 var b_arp1= board.create('point',[xp-13,-3],{name:function(){return nameRef.p[1]},size:1,attractors:[lineBottom,lineTop,lineMid,lineBottom2],attractorDistance:0.5, snatchDistance:1,showInfobox:false,fixed:function(){return nameRef.chkd}});
 var rctArrow1=board.create('segment',[a_arp1,b_arp1],{strokeColor:'red',lastarrow: {type: 2, size: 6}});
 //arrow1 text
-
 board.create('text',[xp-12,-2,function(){return{#arrow1Lable#}}],{fontSize: 15, color:'black',attractors:[rctArrow1],attractorDistance:10,snatchDistance:1000,  showInfobox:false,useMathJax: true});
 
 //---------------------------------------------------------------------
 var a_arp2= board.create('point',[xp-8,0],{name:function(){return nameRef.p[2]},face:'[]', size:3,attractors:[lineBottom,lineTop,lineMid,lineBottom2 ],attractorDistance:0.5,snatchDistance:1,  showInfobox:false, fixed:function(){return nameRef.chkd}});
 var b_arp2= board.create('point',[xp-8,-3],{name:function(){return nameRef.p[3]},size:1,attractors:[lineBottom,lineTop,lineMid,lineBottom2 ],attractorDistance:0.5, snatchDistance:1,showInfobox:false, fixed:function(){return nameRef.chkd}});
-
 var rctArrow2=board.create('segment',[a_arp2,b_arp2],{strokeColor:'red',lastarrow: {type: 2, size: 6}});
 //arrow2 text
-
 board.create('text',[xp-12,-2,function(){return{#arrow2Lable#}}],{fontSize: 15, color:'black',attractors:[rctArrow2],attractorDistance:10,snatchDistance:1000,  showInfobox:false,useMathJax: true});
 
 //-------------------------------------------------------------------------------------------------
 var a_arp3= board.create('point',[xp-10,-4],{name:function(){return nameRef.p[4]},face:'[]', size:3,attractors:[lineBottom,lineTop,lineMid,lineBottom2 ],attractorDistance:0.5,snatchDistance:1,  showInfobox:false, fixed:function(){return nameRef.chkd}});
 var b_arp3= board.create('point',[xp-10,-7],{name:function(){return nameRef.p[5]},size:1,attractors:[lineBottom,lineTop,lineMid,lineBottom2 ],attractorDistance:0.5, snatchDistance:1,showInfobox:false, fixed:function(){return nameRef.chkd}});
-
 var rctArrow3=board.create('segment',[a_arp3,b_arp3],{strokeColor:'red',lastarrow: {type: 2, size: 6}});
-
 //arrow3 text
-
+board.create('text',[xp-12,-5,function(){return{#arrow3Lable#}}],{fontSize: 15, color:'black',attractors:[rctArrow3],attractorDistance:10,snatchDistance:1000,  showInfobox:false,useMathJax: true});
 //-------------------------------------------------------------------------------------------------
 var a_arp4= board.create('point',[xp-6,-4],{name:function(){return nameRef.p[6]},face:'[]', size:3,attractors:[lineBottom,lineTop,lineMid,lineBottom2 ],attractorDistance:0.5,snatchDistance:1,  showInfobox:false, fixed:function(){return nameRef.chkd}});
 var b_arp4= board.create('point',[xp-6,-7],{name:function(){return nameRef.p[7]},size:1,attractors:[lineBottom,lineTop,lineMid,lineBottom2 ],attractorDistance:0.5, snatchDistance:1,showInfobox:false, fixed:function(){return nameRef.chkd}});
-
 var rctArrow4=board.create('segment',[a_arp4,b_arp4],{strokeColor:'red',lastarrow: {type: 2, size: 6}});
-
 //arrow3 text
-
-
 board.create('text',[xp-12,-5,function(){return{#arrow4Lable#}}],{fontSize: 15, color:'black',attractors:[rctArrow4],attractorDistance:10,snatchDistance:1000,  showInfobox:false,useMathJax: true});
 
 
   board.on('move', function(){
   
    b_arp1.moveTo([a_arp1.X(), b_arp1.Y()]);   
-	 a_arp1.moveTo([a_arp1.X(),b_arp1.Y()]);
+	 a_arp1.moveTo([a_arp1.X(),a_arp1.Y()]);
    b_arp2.moveTo([a_arp2.X(), b_arp2.Y()]);   
 	 a_arp2.moveTo([a_arp2.X(),a_arp2.Y()]);
   b_arp3.moveTo([a_arp3.X(), b_arp3.Y()]);   
