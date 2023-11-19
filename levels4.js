@@ -11,7 +11,7 @@ JXG.Options.layer.text = 0;
 
 
 //-----------------------------------------------------------------------
-  var board = JXG.JSXGraph.initBoard(divid, {boundingbox: [-25, 10, 25, -10], axis: false, showCopyright: false,showNavigation:false,pan:{enabled:false},zoom:{enabled:false},resize: {enabled:false}});
+  var board = JXG.JSXGraph.initBoard(divid, {boundingbox: [-25, 10, 25, -15], axis: false, showCopyright: false,showNavigation:false,pan:{enabled:false},zoom:{enabled:false},resize: {enabled:false}});
 
 var xp={#Axis_p#},ylable_p={#ylable_p#};
 //lines top and bottom and hidden
