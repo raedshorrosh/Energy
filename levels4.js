@@ -132,7 +132,7 @@ board.create('text',[xp-12,-5,function(){return{#arrow4Lable#}}],{fontSize: 15, 
     state4 = JSON.parse(stateInput4.value);
   }
 
- var reactBot2=board.create('text',[state3['x'],state3['y'],function(){return nameRef.txtbot}],{fontSize: 15, color:'green',attractors:[lineTop,lineBottom,lineMid,lineBottom2], attractorDistance:1.0 ,snatchDistance:2,useMathJax: true,anchorY:'bottom',fixed:function(){return nameRef.chkd}});
+ var reactBot2=board.create('text',[state3['x'],state3['y'],function(){return nameRef.txtbot2}],{fontSize: 15, color:'green',attractors:[lineTop,lineBottom,lineMid,lineBottom2], attractorDistance:1.0 ,snatchDistance:2,useMathJax: true,anchorY:'bottom',fixed:function(){return nameRef.chkd}});
 
 
 // And finally the most important thing, update the stored state when things change.
