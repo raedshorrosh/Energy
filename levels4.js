@@ -26,7 +26,7 @@ var lineBottom2 = board.create('segment', [[xp+1.0,{#top_line#}-{#gap#}-{#gap2#}
 
 
 //axis arrow
- var e_axis= board.create('arrow',[[xp,-9.0],[xp,9.0]], {strokeColor:'black', strokeWidth:3, fixed:true});
+ var e_axis= board.create('arrow',[[xp,-14.0],[xp,9.0]], {strokeColor:'black', strokeWidth:3, fixed:true});
  board.create('text',[xp-1,ylable_p,'{@enthalpy@}'],{fontSize: 18, color:'black', fixed: true,  display: 'internal',rotate: 90});
 
 //Reaction arrows
@@ -132,7 +132,7 @@ board.create('text',[xp-12,-5,function(){return{#arrow4Lable#}}],{fontSize: 15, 
     state4 = JSON.parse(stateInput4.value);
   }
 
- var reactBot2=board.create('text',[state3['x'],state3['y'],function(){return nameRef.txtbot2}],{fontSize: 15, color:'green',attractors:[lineTop,lineBottom,lineMid,lineBottom2], attractorDistance:1.0 ,snatchDistance:2,useMathJax: true,anchorY:'bottom',fixed:function(){return nameRef.chkd}});
+ var reactBot2=board.create('text',[state4['x'],state4['y'],function(){return nameRef.txtbot2}],{fontSize: 15, color:'green',attractors:[lineTop,lineBottom,lineMid,lineBottom2], attractorDistance:1.0 ,snatchDistance:2,useMathJax: true,anchorY:'bottom',fixed:function(){return nameRef.chkd}});
 
 
 // And finally the most important thing, update the stored state when things change.
