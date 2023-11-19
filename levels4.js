@@ -4,7 +4,7 @@
 
 [[jsxgraph width="600px" input-ref-ans1='ans1Ref'  input-ref-ans2='ans2Ref'  input-ref-ans3='ans3Ref' input-ref-ans4='ans4Ref'  input-ref-ans50='ans50Ref'  input-ref-ans51='ans51Ref' input-ref-ans60='ans60Ref'  input-ref-ans61='ans61Ref' input-ref-ans5='stateRef5'  input-ref-ans6='stateRef6'  input-ref-ans7='stateRef7' input-ref-ans8='stateRef8']]
 
-var nameRef ={txttop:{#txttop#}, txtmid:{#txtmid#},txtbot:{#txtbot#}, txtbot:{#txtbot#}, p:["","","","","","","",""],chkd:false};
+var nameRef ={txttop:{#txttop#}, txtmid:{#txtmid#},txtbot:{#txtbot#}, txtbot2:{#txtbot2#}, p:["","","","","","","",""],chkd:false};
 JXG.Options.text.cssDefaultStyle += ';direction:ltr; font-family:Arial;';
 JXG.Options.text.highlightCssDefaultStyle += ';direction:ltr;';
 JXG.Options.layer.text = 0;
