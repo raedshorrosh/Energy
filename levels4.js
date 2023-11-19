@@ -1,8 +1,7 @@
 <script type="text/javascript">
  var checkAnswer=[];
 </script>
-
-[[jsxgraph width="600px" input-ref-ans1='ans1Ref'  input-ref-ans2='ans2Ref'  input-ref-ans3='ans3Ref' input-ref-ans4='ans4Ref'  input-ref-ans50='ans50Ref'  input-ref-ans51='ans51Ref'  input-ref-ans5='stateRef5'  input-ref-ans6='stateRef6'  input-ref-ans7='stateRef7']]
+[[jsxgraph width="600px" input-ref-ans1='ans1Ref'  input-ref-ans2='ans2Ref'  input-ref-ans3='ans3Ref' input-ref-ans4='ans4Ref'  input-ref-ans50='ans50Ref'  input-ref-ans51='ans51Ref' input-ref-ans60='ans60Ref'  input-ref-ans61='ans61Ref' input-ref-ans5='stateRef5'  input-ref-ans6='stateRef6'  input-ref-ans7='stateRef7' input-ref-ans8='stateRef8']]
 var nameRef ={txttop:{#txttop#}, txtmid:{#txtmid#},txtbot:{#txtbot#}, txtbot2:{#txtbot2#}, p:["","","","","","","",""],chkd:false};
 JXG.Options.text.cssDefaultStyle += ';direction:ltr; font-family:Arial;';
 JXG.Options.text.highlightCssDefaultStyle += ';direction:ltr;';
@@ -70,8 +69,8 @@ board.create('text',[xp-12,-5,function(){return{#arrow4Lable#}}],{fontSize: 15, 
 
   board.on('move', function(){
   
-   b_arp1.moveTo([.X(), b_arp1.Y()]);   
-	 .moveTo([.X(),.Y()]);
+   b_arp1.moveTo([a_arp1.X(), b_arp1.Y()]);   
+	 a_arp1.moveTo([a_arp1.X(),b_arp1.Y()]);
    b_arp2.moveTo([a_arp2.X(), b_arp2.Y()]);   
 	 a_arp2.moveTo([a_arp2.X(),a_arp2.Y()]);
   b_arp3.moveTo([a_arp3.X(), b_arp3.Y()]);   
