@@ -23,7 +23,7 @@ var lineMid = board.create('segment', [[xp+1.0,{#top_line#}-{#gap#}],[{#l_length
 
 var lineBottom = board.create('segment', [[xp+1.0,{#top_line#}-{#gap#}-{#gap2#}],[{#l_length#}+xp,{#top_line#}-{#gap#}-{#gap2#}]], {strokeColor:'black',strokeWidth:3,fixed: true});
 
-var lineBottom2 = board.create('segment', [[xp+1.0,{#top_line#}-{#gap#}-{#gap2#}-{#gap3#],[{#l_length#}+xp,{#top_line#}-{#gap#}-{#gap2#}]], {strokeColor:'black',strokeWidth:3,fixed: true});
+var lineBottom2 = board.create('segment', [[xp+1.0,{#top_line#}-{#gap#}-{#gap2#}-{#gap3#}],[{#l_length#}+xp,{#top_line#}-{#gap#}-{#gap2#}-{#gap3#}]], {strokeColor:'black',strokeWidth:3,fixed: true});
 
 
 
