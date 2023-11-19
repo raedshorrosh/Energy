@@ -2,7 +2,7 @@
  var checkAnswer=[];
 </script>
 [[jsxgraph width="600px" input-ref-ans1='ans1Ref'  input-ref-ans2='ans2Ref'  input-ref-ans3='ans3Ref' input-ref-ans4='ans4Ref'  input-ref-ans50='ans50Ref'  input-ref-ans51='ans51Ref' input-ref-ans60='ans60Ref'  input-ref-ans61='ans61Ref' input-ref-ans5='stateRef5'  input-ref-ans6='stateRef6'  input-ref-ans7='stateRef7' input-ref-ans8='stateRef8']]
-var nameRef ={txttop:{#txttop#}, txtmid:{#txtmid#},txtbot:{#txtbot#}, txtbot2:{#txtbot2#}, p:["","","","","","","",""],chkd:false};
+var nameRef ={txttop2:{#txttop2#},txttop:{#txttop#}, txtmid:{#txtmid#},txtbot:{#txtbot#}, p:["","","","","","","",""],chkd:false};
 JXG.Options.text.cssDefaultStyle += ';direction:ltr; font-family:Arial;';
 JXG.Options.text.highlightCssDefaultStyle += ';direction:ltr;';
 JXG.Options.layer.text = 0;
@@ -132,12 +132,12 @@ board.create('text',[xp-12,-5,function(){return{#arrow4Lable#}}],{fontSize: 15, 
     state4 = JSON.parse(stateInput4.value);
   }
 
- var reactBot2=board.create('text',[state4['x'],state4['y'],function(){return nameRef.txtbot2}],{fontSize: 15, color:'green',attractors:[lineTop,lineBottom,lineMid,lineBottom2], attractorDistance:1.0 ,snatchDistance:2,useMathJax: true,anchorY:'bottom',fixed:function(){return nameRef.chkd}});
+ var reacttop2=board.create('text',[state4['x'],state4['y'],function(){return nameRef.txttop2}],{fontSize: 15, color:'green',attractors:[lineTop,lineBottom,lineMid,lineBottom2], attractorDistance:1.0 ,snatchDistance:2,useMathJax: true,anchorY:'bottom',fixed:function(){return nameRef.chkd}});
 
 
 // And finally the most important thing, update the stored state when things change.
-  reactBot2.on('drag', function() {
-    var newState4 = {'x':reactBot.X(), 'y':reactBot.Y()};
+  reacttop2.on('drag', function() {
+    var newState4 = {'x':reacttop2.X(), 'y':reacttop2.Y()};
     // Encode the state as JSON for storage and store it
     stateInput4.value = JSON.stringify(newState4);
 
