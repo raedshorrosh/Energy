@@ -58,10 +58,10 @@ var rctArrow3=board.create('segment',[a_arp3,b_arp3],{strokeColor:'red',lastarro
 //arrow3 text
 
 //-------------------------------------------------------------------------------------------------
-var a_arp4= board.create('point',[xp-10,-4],{name:function(){return nameRef.p[4]},face:'[]', size:3,attractors:[lineBottom,lineTop,lineMid,lineBottom2 ],attractorDistance:0.5,snatchDistance:1,  showInfobox:false, fixed:function(){return nameRef.chkd}});
-var b_arp4= board.create('point',[xp-10,-7],{name:function(){return nameRef.p[5]},size:1,attractors:[lineBottom,lineTop,lineMid,lineBottom2 ],attractorDistance:0.5, snatchDistance:1,showInfobox:false, fixed:function(){return nameRef.chkd}});
+var a_arp4= board.create('point',[xp-6,-4],{name:function(){return nameRef.p[5]},face:'[]', size:3,attractors:[lineBottom,lineTop,lineMid,lineBottom2 ],attractorDistance:0.5,snatchDistance:1,  showInfobox:false, fixed:function(){return nameRef.chkd}});
+var b_arp4= board.create('point',[xp-6,-7],{name:function(){return nameRef.p[6]},size:1,attractors:[lineBottom,lineTop,lineMid,lineBottom2 ],attractorDistance:0.5, snatchDistance:1,showInfobox:false, fixed:function(){return nameRef.chkd}});
 
-var rctArrow3=board.create('segment',[a_arp4,b_arp4],{strokeColor:'red',lastarrow: {type: 2, size: 6}});
+var rctArrow4=board.create('segment',[a_arp4,b_arp4],{strokeColor:'red',lastarrow: {type: 2, size: 6}});
 
 //arrow3 text
 
