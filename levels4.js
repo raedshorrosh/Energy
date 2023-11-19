@@ -128,7 +128,7 @@ board.create('text',[xp-12,-5,function(){return{#arrow4Lable#}}],{fontSize: 15, 
 //--
  var state4 = {'x':xp-18, 'y':5};
   var stateInput4 = document.getElementById(stateRef8);
-  if (stateInput4.value !=( stateInput8.value != '')) {
+  if (stateInput4.value !=( stateInput4.value != '')) {
     state4 = JSON.parse(stateInput4.value);
   }
 
