@@ -92,7 +92,7 @@ board.create('text',[xp-12,-5,function(){return{#arrow4Lable#}}],{fontSize: 15, 
   });
 
 //products
-  var state2 = {'x':xp-18, 'y':3};
+  var state2 = {'x':xp-18, 'y':4};
   var stateInput2 = document.getElementById(stateRef6);
   if (stateInput2.value !=(stateInput2.value != '')) {
     state2 = JSON.parse(stateInput2.value);
@@ -108,7 +108,7 @@ board.create('text',[xp-12,-5,function(){return{#arrow4Lable#}}],{fontSize: 15, 
 
   });
 
- var state3 = {'x':xp-18, 'y':4};
+ var state3 = {'x':xp-18, 'y':6};
   var stateInput3 = document.getElementById(stateRef5);
   if (stateInput3.value !=( stateInput3.value != '')) {
     state3 = JSON.parse(stateInput3.value);
@@ -126,7 +126,7 @@ board.create('text',[xp-12,-5,function(){return{#arrow4Lable#}}],{fontSize: 15, 
   });
 
 //--
- var state4 = {'x':xp-18, 'y':5};
+ var state4 = {'x':xp-18, 'y':8};
   var stateInput4 = document.getElementById(stateRef8);
   if (stateInput4.value !=( stateInput4.value != '')) {
     state4 = JSON.parse(stateInput4.value);
