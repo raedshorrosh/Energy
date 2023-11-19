@@ -166,8 +166,8 @@ stack_jxg.bind_point(ans4Ref,b_arp2);board.update();
 stack_jxg.bind_point(ans50Ref,a_arp3);board.update();
 stack_jxg.bind_point(ans51Ref,b_arp3);board.update();
 
-stack_jxg.bind_point(ans60Ref,a_arp3);board.update();
-stack_jxg.bind_point(ans61Ref,b_arp3);board.update();
+stack_jxg.bind_point(ans60Ref,a_arp4);board.update();
+stack_jxg.bind_point(ans61Ref,b_arp4);board.update();
 
 let rqm={#rqm#};
 //board.create('text',[10,10,{#rqm#}]);
