@@ -39,8 +39,7 @@ var lineBottom = board.create('segment', [[xp+1.0,{#top_line#}-{#gap#}],[{#l_len
 
 //axis arrow
  var e_axis= board.create('arrow',[[xp,-9.0],[xp,9.0]], {strokeColor:'black', strokeWidth:3, fixed:true});
-// board.create('text',[xp-1,ylable_p,'{@enthalpy@}'],{fontSize: 18, color:'black', fixed: true,  display: 'internal',rotate: 90});
- board.create('text',[xp-1,ylable_p,'אנתלפיה (kJ)'],{fontSize: 18, color:'black', fixed: true,  display: 'internal',rotate: 90});
+ board.create('text',[xp-1,ylable_p,'{@enthalpy@}'],{fontSize: 18, color:'black', fixed: true,  display: 'internal',rotate: 90});
 
 //Reaction arrow
 var a_arp= board.create('point',[xp-12,1],{name:function(){return nameRef.p[0]},face:'[]', size:3,attractors:[lineBottom,lineTop],attractorDistance:0.5,snatchDistance:1,  showInfobox:false,fixed:function(){return nameRef.chkd}});
