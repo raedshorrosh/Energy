@@ -1,4 +1,9 @@
-<script>
+
+<script type="text/javascript">
+ var checkAnswer=[];
+ </script>
+[[jsxgraph  width="800px" height="400px"  input-ref-states='statesRef'  input-ref-ans1='DHtot'  input-ref-DHval1='DHst1'
+  input-ref-DHval2='DHst2']]
   function isless(x,y) {return (x<y)};
   function iand(x,y)  {return (x&&y)};
   function igrt(x,y)  {return (x>y)};
@@ -14,12 +19,7 @@
             col = index % numColumns;
         return [row, col]; 
     }
-</script>
-<script type="text/javascript">
- var checkAnswer=[];
- </script>
-[[jsxgraph  width="800px" height="400px"  input-ref-states='statesRef'  input-ref-ans1='DHtot'  input-ref-DHval1='DHst1'
-  input-ref-DHval2='DHst2']]
+
  JXG.Options.text.cssDefaultStyle = 'direction:ltr; font-family:Arial;';
   JXG.Options.text.highlightCssDefaultStyle = 'direction:ltr';
   let rqm={#rqm#};
