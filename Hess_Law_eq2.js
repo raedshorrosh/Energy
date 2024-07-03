@@ -12,11 +12,11 @@
   function ibetween(a,x,y) {return ((a>x)&&(a<y))};
   function dist(a,b){return Math.sqrt((a[0]-b[0])*(a[0]-b[0])+(a[1]-b[1])*(a[1]-b[1]))};
   function indexOf2dArray(array2d, itemtofind) {
-           index = [].concat.apply([], ([].concat.apply([], array2d))).indexOf(itemtofind);
+         var  index = [].concat.apply([], ([].concat.apply([], array2d))).indexOf(itemtofind);
            if (index === -1) { return false; }
-            numColumns = array2d[0].length;
-            row = parseInt(index / numColumns);
-            col = index % numColumns;
+         var   numColumns = array2d[0].length;
+         var   row = parseInt(index / numColumns);
+         var   col = index % numColumns;
         return [row, col]; 
     }
 
