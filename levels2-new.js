@@ -90,49 +90,70 @@ stack_jxg.bind_point(ans2Ref,b_arp);board.update();
 
 let rqm={#rqm#};
 
-checkAnswer[rqm] = function(indx, mrk) {
-  switch (indx) {
-    case 2:
-      if (mrk == 1) {
-        nameRef.reacttxt = '<i class="fa fa-check"></i>' + nameRef.reacttxt;
-      } else {
-        nameRef.reacttxt = '<span style="font-size: 1.0em; color:red;"><i class="fa fa-times"></i> </span>' + nameRef.reacttxt;
-      }
-board.update();
-      break;
-    case 3:
-      if (mrk == 1) {
-        nameRef.prodtxt = '<i class="fa fa-check"></i>' + nameRef.prodtxt;
-      } else {
-        nameRef.prodtxt = '<span style="font-size: 1.0em; color:red;"><i class="fa fa-times"></i> </span>' + nameRef.prodtxt;
-      }
-board.update();
-      break;
-    case 8:
-      if (mrk == 1) {
- nameRef.mrkH='<span style="font-size: 1.25em; color:green;"><i class="fa fa-check"></i></span>'}
- else {
- nameRef.mrkH='<span style="font-size: 1.0em; color:red;"><i class="fa fa-times"></i></span>'      }
-board.update();
-      break;
-   case 9:
-      if (mrk == 1) {
- nameRef.mrkE='<span style="font-size: 1.25em; color:green;"><i class="fa fa-check"></i></span>'}
- else {
- nameRef.mrkE='<span style="font-size: 1.0em; color:red;"><i class="fa fa-times"></i></span>'      }
-board.update();
-      break;
-    default:
-     nameRef.chkd=true;
-      if (mrk == 1) {
-        nameRef.p[indx] = '<span style="font-size: 1.5em; color:green;"><i class="fa fa-check"></i>'
+stack_js.get_content({#rqm#}+"a").then((content) => {
+if (content !== null) {
+// As the content is not null this means the span is present so feedback is displayed and we can react to it here
+if  ( !(answered1)) {
+      answered1=true;
+let grade =JSON.parse(content)[0];
+	if (grade==1){
+        nameRef.p[0] = '<span style="font-size: 1.5em; color:green;">✔</i>'
       } else {
         {
-          nameRef.p[indx] = '<span style="font-size: 1.5em; color:red;"><i class="fa fa-times"></i></span>';
+          nameRef.p[0] = '<span style="font-size: 1.5em; color:red;">❌</i></span>';
        }
-      board.update(); }
-  }
-};
+
+board.update();  
+}}});
+var answered1=0,answered2=0,answered3=0,answered4=0;
+stack_js.get_content({#rqm#}+"b").then((content) => {
+if (content !== null) {
+// As the content is not null this means the span is present so feedback is displayed and we can react to it here
+if  ( !(answered2)) {
+      answered2=true;
+let grade =JSON.parse(content)[0];
+	if (grade==1){
+        nameRef.p[1] = '<span style="font-size: 1.5em; color:green;">✔</i>'
+      } else {
+        {
+          nameRef.p[1] = '<span style="font-size: 1.5em; color:red;">❌</i></span>';
+       }
+
+board.update();  
+}}});
+
+stack_js.get_content({#rqm#}+"c").then((content) => {
+if (content !== null) {
+// As the content is not null this means the span is present so feedback is displayed and we can react to it here
+if  ( !(answered3)) {
+      answered3=true;
+let grade =JSON.parse(content)[0];
+	if (grade==1){
+        nameRef.reacttxt = '✔' + nameRef.reacttxt;
+      } else {
+        nameRef.reacttxt = '<span style="font-size: 1.0em; color:red;">❌ </span>' + nameRef.reacttxt;
+      }
+
+board.update();  
+}}});
+
+stack_js.get_content({#rqm#}+"d").then((content) => {
+if (content !== null) {
+// As the content is not null this means the span is present so feedback is displayed and we can react to it here
+if  ( !(answered4)) {
+      answered4=true;
+let grade =JSON.parse(content)[0];
+	if (grade==1){
+        nameRef.reacttxt = '✔' + nameRef.reacttxt;
+      } else {
+        nameRef.reacttxt = '<span style="font-size: 1.0em; color:red;">❌ </span>' + nameRef.reacttxt;
+      }
+nameRef.chkd=true;
+board.update();  
+}}});
+
+
+
 let feedback={#feedback#};var fdbk=document.getElementById("div"); fdbk.setAttribute("id",{#rqm#});
 if ( feedback==1) {document.getElementById({#rqm#}).style.display = "block"}
 else {document.getElementById({#rqm#}).style.display = "none"};
