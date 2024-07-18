@@ -178,6 +178,15 @@ board.update();
   }
 };
 
+stack_js.get_content({#rqm#}).then((content) => {
+if (content !== null) {
+// As the content is not null this means the span is present so feedback is displayed and we can react to it here
+if  ( !(nameRef.chkd)) {
+      
+let grade =JSON.parse(content);
+for (let i = 0; i != 9; i++) {checkAnswer(i,grade[i])}	
 
+board.update();  
+}}});
 
 [[/jsxgraph]]</span>
