@@ -98,7 +98,7 @@ if  ( !(answered1)) {
 let grade =JSON.parse(content)[0];
 	if (grade==1){
         nameRef.p[0] = '<span style="font-size: 1.5em; color:green;">✔</i>'
-      } else {
+      } else
         {
           nameRef.p[0] = '<span style="font-size: 1.5em; color:red;">❌</i></span>';
        }
@@ -114,7 +114,7 @@ if  ( !(answered2)) {
 let grade =JSON.parse(content)[0];
 	if (grade==1){
         nameRef.p[1] = '<span style="font-size: 1.5em; color:green;">✔</i>'
-      } else {
+      } else 
         {
           nameRef.p[1] = '<span style="font-size: 1.5em; color:red;">❌</i></span>';
        }
