@@ -184,7 +184,7 @@ if (content !== null) {
 if  ( !(nameRef.chkd)) {
  nameRef.chkd=true;
 let grade =JSON.parse(content);
-for (let i = 0; i != 9; i++) {checkAnswer(i,grade[i])}	
+for (let i = 0; i != 9; i++) {checkAnswer(i,grade[i])};
 
 board.update();  
 }}});
