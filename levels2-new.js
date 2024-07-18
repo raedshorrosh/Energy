@@ -100,7 +100,7 @@ let grade =JSON.parse(content)[0];
         nameRef.p[0] = '<span style="font-size: 1.5em; color:green;">✔</i>'
       } else
         {
-          nameRef.p[0] = '<span style="font-size: 1.5em; color:red;">❌</i></span>';
+          nameRef.p[0] = '<span style="font-size: 0.5em; color:red;">❌</i></span>';
        }
 
 board.update();  
@@ -116,7 +116,7 @@ let grade =JSON.parse(content)[0];
         nameRef.p[1] = '<span style="font-size: 1.5em; color:green;">✔</i>'
       } else 
         {
-          nameRef.p[1] = '<span style="font-size: 1.5em; color:red;">❌</i></span>';
+          nameRef.p[1] = '<span style="font-size: 0.5em; color:red;">❌</i></span>';
        }
 
 board.update();  
@@ -131,7 +131,7 @@ let grade =JSON.parse(content)[0];
 	if (grade==1){
         nameRef.reacttxt = '✔' + nameRef.reacttxt;
       } else {
-        nameRef.reacttxt = '<span style="font-size: 1.0em; color:red;">❌ </span>' + nameRef.reacttxt;
+        nameRef.reacttxt = '<span style="font-size: 0.5em; color:red;">❌ </span>' + nameRef.reacttxt;
       }
 
 board.update();  
@@ -146,7 +146,7 @@ let grade =JSON.parse(content)[0];
 	if (grade==1){
         nameRef.prodtxt = '✔' + nameRef.prodtxt;
       } else {
-        nameRef.prodtxt = '<span style="font-size: 1.0em; color:red;">❌ </span>' + nameRef.prodtxt;
+        nameRef.prodtxt = '<span style="font-size: 0.5em; color:red;">❌ </span>' + nameRef.prodtxt;
       }
 nameRef.chkd=true;
 board.update();  
