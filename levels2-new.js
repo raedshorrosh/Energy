@@ -89,6 +89,9 @@ stack_jxg.bind_point(ans1Ref,a_arp);board.update();
 stack_jxg.bind_point(ans2Ref,b_arp);board.update();
 
 let rqm={#rqm#};
+let correctMark='<span style="font-size: 1.5em; color:green;">✔ </span>';
+let incorrectMark='<span style="font-size: 0.5em; color:red;">❌ </span>';
+var answered1=0,answered2=0,answered3=0,answered4=0;
 
 stack_js.get_content({#rqm#}+"a").then((content) => {
 if (content !== null) {
@@ -97,15 +100,15 @@ if  ( !(answered1)) {
       answered1=true;
 let grade =JSON.parse(content)[0];
 	if (grade==1){
-        nameRef.p[0] = '<span style="font-size: 1.5em; color:green;">✔</i>'
+        nameRef.p[0] =correctMark
       } else
         {
-          nameRef.p[0] = '<span style="font-size: 0.5em; color:red;">❌</span>';
+          nameRef.p[0] = incorrectMark;
        }
 
 board.update();  
 }}});
-var answered1=0,answered2=0,answered3=0,answered4=0;
+
 stack_js.get_content({#rqm#}+"b").then((content) => {
 if (content !== null) {
 // As the content is not null this means the span is present so feedback is displayed and we can react to it here
@@ -113,10 +116,10 @@ if  ( !(answered2)) {
       answered2=true;
 let grade =JSON.parse(content)[0];
 	if (grade==1){
-        nameRef.p[1] = '<span style="font-size: 1.5em; color:green;">✔</i>'
+        nameRef.p[1] = correctMark
       } else 
         {
-          nameRef.p[1] = '<span style="font-size: 0.5em; color:red;">❌</span>';
+          nameRef.p[1] =incorrectMark;
        }
 
 board.update();  
@@ -129,9 +132,9 @@ if  ( !(answered3)) {
       answered3=true;
 let grade =JSON.parse(content)[0];
 	if (grade==1){
-        nameRef.reacttxt = '✔' + nameRef.reacttxt;
+        nameRef.reacttxt = correctMark + nameRef.reacttxt;
       } else {
-        nameRef.reacttxt = '<span style="font-size: 0.5em; color:red;">❌ </span>' + nameRef.reacttxt;
+        nameRef.reacttxt = incorrectMark + nameRef.reacttxt;
       }
 
 board.update();  
@@ -144,9 +147,9 @@ if  ( !(answered4)) {
       answered4=true;
 let grade =JSON.parse(content)[0];
 	if (grade==1){
-        nameRef.prodtxt = '✔' + nameRef.prodtxt;
+        nameRef.prodtxt =correctMark + nameRef.prodtxt;
       } else {
-        nameRef.prodtxt = '<span style="font-size: 0.5em; color:red;">❌ </span>' + nameRef.prodtxt;
+        nameRef.prodtxt = incorrectMark + nameRef.prodtxt;
       }
 nameRef.chkd=true;
 board.update();  
@@ -154,9 +157,6 @@ board.update();
 
 
 
-let feedback={#feedback#};var fdbk=document.getElementById("div"); fdbk.setAttribute("id",{#rqm#});
-if ( feedback==1) {document.getElementById({#rqm#}).style.display = "block"}
-else {document.getElementById({#rqm#}).style.display = "none"};
 
 
 [[/jsxgraph]]
