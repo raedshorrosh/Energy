@@ -100,7 +100,7 @@ let grade =JSON.parse(content)[0];
         nameRef.p[0] = '<span style="font-size: 1.5em; color:green;">✔</i>'
       } else
         {
-          nameRef.p[0] = '<span style="font-size: 0.5em; color:red;">❌</i></span>';
+          nameRef.p[0] = '<span style="font-size: 0.5em; color:red;">❌</span>';
        }
 
 board.update();  
@@ -116,7 +116,7 @@ let grade =JSON.parse(content)[0];
         nameRef.p[1] = '<span style="font-size: 1.5em; color:green;">✔</i>'
       } else 
         {
-          nameRef.p[1] = '<span style="font-size: 0.5em; color:red;">❌</i></span>';
+          nameRef.p[1] = '<span style="font-size: 0.5em; color:red;">❌</span>';
        }
 
 board.update();  
