@@ -144,9 +144,9 @@ if  ( !(answered4)) {
       answered4=true;
 let grade =JSON.parse(content)[0];
 	if (grade==1){
-        nameRef.reacttxt = '✔' + nameRef.reacttxt;
+        nameRef.prodtxt = '✔' + nameRef.prodtxt;
       } else {
-        nameRef.reacttxt = '<span style="font-size: 1.0em; color:red;">❌ </span>' + nameRef.reacttxt;
+        nameRef.prodtxt = '<span style="font-size: 1.0em; color:red;">❌ </span>' + nameRef.prodtxt;
       }
 nameRef.chkd=true;
 board.update();  
