@@ -99,7 +99,7 @@ var products=board.create('text',[state2['x'],state2['y'],function(){return name
 let rqm={#rqm#};
 //board.create('text',[10,10,{#rqm#}]);
 
-checkAnswer[rqm] = function(indx, mrk) {
+var checkAnswer[rqm] = function(indx, mrk) {
   switch (indx) {
     case 6:
       if (mrk == 1) {
