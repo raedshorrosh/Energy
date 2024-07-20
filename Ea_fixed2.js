@@ -27,7 +27,7 @@ var dotted3=board.create('segment', {#dotted3#},{fixed:true,dash:2});
 // draw the axis
 board.create('arrow',{#y_axis#}, {strokeColor:'black', strokeWidth:3, fixed:true});
 board.create('arrow',{#x_axis#}, {strokeColor:'black', strokeWidth:3,fixed:true});
-board.create('text',[{#leftX1#}-1,16,{#y_title#}],{fontSize: 20, color:'black', fixed: true,  display: 'internal',rotate: 90});
+board.create('text',[{#leftX1#}-1,15,{#y_title#}],{fontSize: 20, color:'black', fixed: true,  display: 'internal',rotate: 90});
 board.create('text',[{#rightX1#},-17,{#x_title#}],{fontSize: 20, color:'black', fixed: true,  display: 'internal'});
 
 var fxd=function(){return nameRef.chkd};
