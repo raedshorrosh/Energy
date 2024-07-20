@@ -128,8 +128,15 @@ board.update();
       board.update(); }
   }
 };
-let feedback={#feedback#};var a=document.getElementById("div"); a.setAttribute("id",{#rqm#});
-if ( feedback==1) {document.getElementById({#rqm#}).style.display = "block"}
-else {document.getElementById({#rqm#}).style.display = "none"};
+stack_js.get_content({#rqm#}).then((content) => {
+if (content !== null) {
+// As the content is not null this means the span is present so feedback is displayed and we can react to it here
+if  ( !(nameRef.chkd)) {
+ nameRef.chkd=true;
+let grade =JSON.parse(content);
+for (let i = 0; i !=8; i++) {checkAnswer(i,grade[i])};
+console.log(grade);
+board.update();  
+}}});
 
   [[/jsxgraph]]
