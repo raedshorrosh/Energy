@@ -177,7 +177,7 @@ try{    temp=eval(Einput[ii].Value());}
 catch(e) {console.log(1);temp=0}
   tot= tot+temp ;
 }
-if (!isNaN(tot)) {DHtotal.value=tot.toFixed(1);temp2=' = '+tot.toFixed(1),temp3=' kJ '} else {temp2='',temp3=''};
+if (!isNaN(tot)) {DHtotal.value=tot.toFixed(1);DHtotal.dispatchEvent(new Event('change'));temp2=' = '+tot.toFixed(1),temp3=' kJ '} else {temp2='',temp3=''};
 return '<a style="color:blue;">'+txt+temp2+temp3 +'</a>'+getmark(2*jmax);
 }], {
   fontSize: fontsize,
@@ -195,7 +195,7 @@ answers=JSON.parse(ans.value);
         Einput[ii].set(DHSt[ii].value);
     }
 }
-else  for (let ii=0;isless(ii,jmax);ii++) {answers[ii]=1;ans.value=JSON.stringify(answers); Einput[ii].set('');}
+else  for (let ii=0;isless(ii,jmax);ii++) {answers[ii]=1;ans.value=JSON.stringify(answers);ans.dispatchEvent(new Event('change')); Einput[ii].set('');}
  
 board.update();  
 
@@ -204,7 +204,7 @@ JXG.addEvent(checkbox[j].rendNodeCheckbox, 'change', function() {
 var temp=1;
 try {temp=eval(input[j].Value())}
 catch(e){temp=1};
-if (!isNaN(temp*1)) {answers[j]=(this.Value()?-1:+1)*temp;ans.value=JSON.stringify(answers);} 
+if (!isNaN(temp*1)) {answers[j]=(this.Value()?-1:+1)*temp;ans.value=JSON.stringify(answers);ans.dispatchEvent(new Event('change'));} 
     //answers[j]=(this.Value()?-1:1)*parseFloat(input[j].Value());
      //ans.value=JSON.stringify(answers);
 board.update();  
@@ -214,14 +214,14 @@ JXG.addEvent(input[j].rendNodeInput, 'input', function() {
     var temp=1;
     try {temp=eval(input[j].Value())}
     catch(e){temp=1};
-if (!isNaN(temp*1)) {answers[j]=(checkbox[j].Value()?-1:+1)*temp; ans.value=JSON.stringify(answers);}
+if (!isNaN(temp*1)) {answers[j]=(checkbox[j].Value()?-1:+1)*temp; ans.value=JSON.stringify(answers);ans.dispatchEvent(new Event('change'));}
     //answers[j]=(checkbox[j].Value()?-1:1)*parseFloat(input[j].Value());
      //ans.value=JSON.stringify(answers);
 board.update();  
 }, input[j]);
 
 JXG.addEvent(Einput[j].rendNodeInput, 'input', function() {
-    DHSt[j].value=Einput[j].Value();
+    DHSt[j].value=Einput[j].Value();DHSt[j].dispatchEvent(new Event('change'));
 board.update();  
 }, Einput[j]);
 
