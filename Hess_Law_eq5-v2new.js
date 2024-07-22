@@ -32,6 +32,7 @@ var board = JXG.JSXGraph.initBoard(divid, {
 });
 
 var eqx=[];
+var answered=false;
 var ceqs={#ceqs#},eq0={#ceq0#},jmax=ceqs.length;
 var ncolors={#clrs#},btoken={#btoken#};
 var DH={#DH#},correct={#answers#};
