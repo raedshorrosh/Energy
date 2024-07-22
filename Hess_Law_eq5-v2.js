@@ -38,7 +38,7 @@ var eqx=[];
 var ceqs={#ceqs#},eq0={#ceq0#},jmax=ceqs.length;
 var ncolors={#clrs#},btoken={#btoken#};
 var DH={#DH#},correct={#answers#};
-var markpos=[5,12];
+var markpos=[6,12];
 var top=2,fontsize=19;
 var input=[],Einput=[],checkbox=[],DHv=[],answers=[];
 var eqn,i;
