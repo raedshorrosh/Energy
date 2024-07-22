@@ -40,7 +40,7 @@ var ceqs={#ceqs#},eq0={#ceq0#},jmax=ceqs.length;
 var ncolors={#clrs#},btoken={#btoken#};
 
 var DH={#DH#};
-var markpos=[5,12];
+var markpos=[6,12];
 var top=2,fontsize=19;
 var correct={#answers#}
 var input=[],Einput=[],checkbox=[],DHv=[],answers=[];
