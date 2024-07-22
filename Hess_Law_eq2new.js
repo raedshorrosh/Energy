@@ -157,7 +157,7 @@ DHv[j]=DH[j]*factor;
   });
 
 //writing the kJ and marks
- board.create('text', [markpos[1], top-0.35-j,function(){return 'kJ'+getmark(j+jmax)}], {
+ board.create('text', [markpos, top-0.35-j,function(){return 'kJ'+getmark(j+jmax)}], {
   fontSize: fontsize,
   fixed: true,
   anchorY: 'bottom'
