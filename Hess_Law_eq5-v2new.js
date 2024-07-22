@@ -191,7 +191,7 @@ answers=JSON.parse(ans.value);
         Einput[ii].set(DHSt[ii].value);
     }
 }
-else  for (let ii=0;isless(ii,jmax);ii++) {answers[ii]=1;ans.value=JSON.stringify(answers);ans.dispatchEvent(new Event('change')Einput[ii].set('');}
+else  for (let ii=0;isless(ii,jmax);ii++) {answers[ii]=1;ans.value=JSON.stringify(answers);ans.dispatchEvent(new Event('change'));Einput[ii].set('');}
  
 board.update();  
 
@@ -200,7 +200,7 @@ JXG.addEvent(checkbox[j].rendNodeCheckbox, 'change', function() {
 var temp=1;
 try {temp=eval(input[j].Value())}
 catch(e){temp=1};
-if (!isNaN(temp*1)) {answers[j]=(this.Value()?-1:+1)*temp;ans.value=JSON.stringify(answers);ans.dispatchEvent(new Event('change')} 
+if (!isNaN(temp*1)) {answers[j]=(this.Value()?-1:+1)*temp;ans.value=JSON.stringify(answers);ans.dispatchEvent(new Event('change'));} 
     //answers[j]=(this.Value()?-1:1)*parseFloat(input[j].Value());
      //ans.value=JSON.stringify(answers);
 board.update();  
@@ -210,14 +210,14 @@ JXG.addEvent(input[j].rendNodeInput, 'input', function() {
     var temp=1;
     try {temp=eval(input[j].Value())}
     catch(e){temp=1};
-if (!isNaN(temp*1)) {answers[j]=(checkbox[j].Value()?-1:+1)*temp; ans.value=JSON.stringify(answers);ans.dispatchEvent(new Event('change')}
+if (!isNaN(temp*1)) {answers[j]=(checkbox[j].Value()?-1:+1)*temp; ans.value=JSON.stringify(answers);ans.dispatchEvent(new Event('change'));}
     //answers[j]=(checkbox[j].Value()?-1:1)*parseFloat(input[j].Value());
      //ans.value=JSON.stringify(answers);
 board.update();  
 }, input[j]);
 
 JXG.addEvent(Einput[j].rendNodeInput, 'input', function() {
-DHSt[j].value=Einput[j].Value();DHSt[j].dispatchEvent(new Event('change')
+DHSt[j].value=Einput[j].Value();DHSt[j].dispatchEvent(new Event('change'));
 board.update();  
 }, Einput[j]);
 
