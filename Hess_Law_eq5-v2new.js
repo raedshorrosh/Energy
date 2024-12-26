@@ -174,7 +174,7 @@ try{  temp=eval(Einput[ii].Value());}
 catch(e) {console.log(1);temp=0}
   tot= tot+temp ;
 }
-if (!isNaN(tot)) {DHtotal.value=tot.toFixed(1);temp2=' = '+tot.toFixed(1),temp3=' kJ '} else {temp2='',temp3=''};
+if (!isNaN(tot)) {DHtotal.value=tot.toFixed(1);DHtotal.dispatchEvent(new Event('change'));temp2=' = '+tot.toFixed(1),temp3=' kJ '} else {temp2='',temp3=''};
 return '<a style="color:blue;">'+txt+temp2+temp3 +'</a>'+getmark(2*jmax);
 }], {
   fontSize: fontsize,
