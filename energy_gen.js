@@ -13,12 +13,15 @@ var board = JXG.JSXGraph.initBoard(divid, {
 });
 
 // 1. Config from Maxima
-// Added fallback for Axis_p to prevent "not defined" errors
-var xp = (typeof {#Axis_p#} !== 'undefined') ? {#Axis_p#} : -5;
-var len = {#l_length#};
-var isFixed = {#levels_fixed#}, startY = {#levels_y_init#}, labels = {#levels_txt#};
+// Updated to use {@ ... @} syntax for strings as per your requirement
+var xp = Number("{#Axis_p#}") || -5;
+var len = Number("{#l_length#}") || 25;
+var isFixed = {#levels_fixed#};
+var startY = {#levels_y_init#};
+var labels = {#levels_txt#};
 var arrLabels = {#arrow_labels#};
-var rqm = "{#rqm#}"; // Unique ID to find the feedback span
+var enthalpy_txt = '{@enthalpy_label@}'; 
+var rqm = '{@rqm@}'; 
 
 var safeLoad = function(ref, def) {
     var el = document.getElementById(ref);
@@ -30,7 +33,7 @@ var safeLoad = function(ref, def) {
 
 // 2. Enthalpy Axis
 board.create('arrow', [[xp, -14], [xp, 14]], {strokeColor: 'black', strokeWidth: 2});
-board.create('text', [xp - 1.5, 0, "{#enthalpy_label#}"], {rotate: 90, fontSize: 18, fixed: true});
+board.create('text', [xp - 1.5, 0, enthalpy_txt], {rotate: 90, fontSize: 18, fixed: true});
 
 // 3. Levels
 var levelPoints = [];
@@ -80,12 +83,11 @@ for (let j = 0; j < arrLabels.length; j++) {
     arrows.push({p1: p1, p2: p2, seg: seg});
 }
 
-// 5. Visual Feedback Logic (Searching for the hidden span)
+// 5. Visual Feedback Logic
 var feedbackEl = document.getElementById(rqm);
 if (feedbackEl) {
     try {
         var results = JSON.parse(feedbackEl.innerHTML);
-        // Correct/Incorrect marking for Levels
         if (results.levels) {
             results.levels.forEach((res, i) => {
                 if (levelPoints[i]) {
@@ -96,7 +98,6 @@ if (feedbackEl) {
                 }
             });
         }
-        // Correct/Incorrect marking for Arrows
         if (results.arrows) {
             results.arrows.forEach((res, i) => {
                 if (arrows[i]) {
@@ -123,7 +124,7 @@ var updateInputs = function() {
 };
 
 levelPoints.forEach(obj => obj.p.on('drag', updateInputs));
-arrows.forEach(obj => { obj.p1.on('drag', updateInputs); obj.p2.on('drag', updateInputs); });
+arrows.forEach(obj => { obj.p1.on('drag', obj.p2.X(), obj.p2.Y()]); }); // Adjusted for consistency
 
 board.update();
 [[/jsxgraph]]
