@@ -2,7 +2,7 @@
   input-ref-levelsRef='levelsRef' 
   input-ref-arrowsRef='arrowsRef' 
   input-ref-chemLabelsRef='chemLabelsRef']]
-//5.0
+//6.0
 var board = JXG.JSXGraph.initBoard(divid, {
     boundingbox: [-25, 15, 25, -15], 
     axis: false, 
@@ -31,7 +31,7 @@ var safeLoad = function(ref, def) {
 
 // 2. Enthalpy Axis
 board.create('arrow', [[xp, -14], [xp, 14]], {strokeColor: 'black', strokeWidth: 2});
-board.create('text', [xp - 1.5, 0, "{#enthalpy_label#}"], {rotate: 90, fontSize: 18, fixed: true});
+board.create('text', [xp - 1.5, 0, "{@enthalpy_label@}"], {rotate: 90, fontSize: 18, fixed: true});
 
 // 3. Levels
 var levelPoints = [];
