@@ -2,7 +2,7 @@
   input-ref-levelsRef='levelsRef' 
   input-ref-arrowsRef='arrowsRef'
   input-ref-chemLabelsRef='chemLabelsRef']]
-//3.0
+//4.0
 var board = JXG.JSXGraph.initBoard(divid, {
     boundingbox: [-25, 15, 25, -15], 
     axis: false, 
@@ -12,14 +12,15 @@ var board = JXG.JSXGraph.initBoard(divid, {
     zoom: {enabled: false}
 });
 
-// 1. Config from Maxima with ReferenceError Protection
+// 1. הגדרות מה-Maxima עם הגנה מפני שגיאות
 var xp = Number("{#Axis_p#}") || -5;
 var len = Number("{#l_length#}") || 25;
 
-var isFixed = (typeof {#levels_fixed#} !== 'undefined') ? {#levels_fixed#} : [0,0,0,1];
-var startY = (typeof {#levels_y_init#} !== 'undefined') ? {#levels_y_init#} : [10, 5, 2, -8];
-var labels = (typeof {#levels_txt#} !== 'undefined') ? {#levels_txt#} : ["L1", "L2", "L3", "L4"];
-var arrLabels = (typeof {#arrow_labels#} !== 'undefined') ? {#arrow_labels#} : ["A1", "A2", "A3", "A4", "A5"];
+// בדיקת קיום משתנים מה-Maxima או שימוש בברירת מחדל עבור מים
+var isFixed = (typeof {#levels_fixed#} !== 'undefined') ? {#levels_fixed#} : [0, 0, 1]; // המוצק בדרך כלל מקובע כבסיס
+var startY = (typeof {#levels_y_init#} !== 'undefined') ? {#levels_y_init#} : [10, 2, -6]; 
+var labels = (typeof {#levels_txt#} !== 'undefined') ? {#levels_txt#} : ["\\( H_2O_{(g)} \\)", "\\( H_2O_{(l)} \\)", "\\( H_2O_{(s)} \\)"];
+var arrLabels = (typeof {#arrow_labels#} !== 'undefined') ? {#arrow_labels#} : ["רתיחה (Boiling)", "התכה (Melting)", "המראה (Sublimation)"];
 
 var enthalpy_txt = '{@enthalpy_label@}'; 
 var rqm = '{@rqm@}'; 
@@ -32,11 +33,11 @@ var safeLoad = function(ref, def) {
     return def;
 };
 
-// 2. Enthalpy Axis
+// 2. ציר אנתלפיה
 board.create('arrow', [[xp, -14], [xp, 14]], {strokeColor: 'black', strokeWidth: 2});
 board.create('text', [xp - 1.5, 0, enthalpy_txt], {rotate: 90, fontSize: 18, fixed: true});
 
-// 3. Levels
+// 3. רמות (מצבי צבירה)
 var levelPoints = [];
 var currentLevelsY = safeLoad(levelsRef, startY);
 
@@ -45,7 +46,7 @@ for (var i = 0; i < labels.length; i++) {
         var p = board.create('point', [xp + 1, currentLevelsY[idx]], {
             name: '', 
             fixed: isFixed[idx] == 1, 
-            moveAlongX: false, // Prevent horizontal movement
+            moveAlongX: false, // מניעת תנועה אופקית
             size: 4, color: 'blue', strokeColor: 'black', showInfobox: false
         });
 
@@ -63,49 +64,42 @@ for (var i = 0; i < labels.length; i++) {
     })(i);
 }
 
-// 4. Arrows
+// 4. חיצים (תהליכים)
 var arrows = [];
-var colors = ['#e74c3c', '#3498db', '#2ecc71', '#f39c12', '#9b59b6'];
+var colors = ['#3498db', '#e74c3c', '#2ecc71']; // צבעים שונים לכל תהליך
 var defaultArrows = [];
 for (var k = 0; k < arrLabels.length; k++) {
-    defaultArrows.push([[xp - 12, 5 - (k * 2)], [xp - 12, 3 - (k * 2)]]);
+    // מיקום ראשוני של החיצים משמאל לציר
+    defaultArrows.push([[xp - 12, 5 - (k * 4)], [xp - 12, 2 - (k * 4)]]);
 }
 var currentArrows = safeLoad(arrowsRef, defaultArrows);
 
 for (var j = 0; j < arrLabels.length; j++) {
     (function(idx) {
-        // moveAlongX: false added to both points of the arrow
         var p1 = board.create('point', currentArrows[idx][0], {
-            name: '', 
-            color: colors[idx % 5], 
-            size: 4, 
-            face: '[]', 
-            moveAlongX: false, 
-            showInfobox: false
+            name: '', color: colors[idx % 3], size: 4, face: '[]', 
+            moveAlongX: false, showInfobox: false
         });
         var p2 = board.create('point', currentArrows[idx][1], {
-            name: '', 
-            color: colors[idx % 5], 
-            size: 2, 
-            moveAlongX: false, 
-            showInfobox: false
+            name: '', color: colors[idx % 3], size: 2, 
+            moveAlongX: false, showInfobox: false
         });
         
         var seg = board.create('segment', [p1, p2], {
-            strokeColor: colors[idx % 5], strokeWidth: 3, lastarrow: {type: 2, size: 6}
+            strokeColor: colors[idx % 3], strokeWidth: 3, lastarrow: {type: 2, size: 6}
         });
 
         board.create('text', [
             function(){ return (p1.X() + p2.X()) / 2 + 0.5; }, 
             function(){ return (p1.Y() + p2.Y()) / 2; }, 
             arrLabels[idx]
-        ], { color: colors[idx % 5], useMathJax: true, fontSize: 14 });
+        ], { color: colors[idx % 3], useMathJax: true, fontSize: 14 });
         
         arrows.push({p1: p1, p2: p2, seg: seg});
     })(j);
 }
 
-// 5. Visual Feedback Logic
+// 5. לוגיקת משוב ויזואלי (צביעה בירוק/אדום לאחר בדיקה)
 var feedbackEl = document.getElementById(rqm);
 if (feedbackEl) {
     var raw = feedbackEl.innerHTML;
@@ -130,19 +124,15 @@ if (feedbackEl) {
     }
 }
 
-// Global Sync
+// פונקציית סנכרון תשובות ל-STACK
 var updateInputs = function() {
     var lvlsData = [];
-    for (var a = 0; a < levelPoints.length; a++) { 
-        lvlsData.push(levelPoints[a].p.Y()); 
-    }
+    for (var a = 0; a < levelPoints.length; a++) { lvlsData.push(levelPoints[a].p.Y()); }
     document.getElementById(levelsRef).value = JSON.stringify(lvlsData);
 
     var arrsData = [];
     for (var b = 0; b < arrows.length; b++) { 
-        var start = [arrows[b].p1.X(), arrows[b].p1.Y()];
-        var end = [arrows[b].p2.X(), arrows[b].p2.Y()];
-        arrsData.push([start, end]); 
+        arrsData.push([[arrows[b].p1.X(), arrows[b].p1.Y()], [arrows[b].p2.X(), arrows[b].p2.Y()]]); 
     }
     document.getElementById(arrowsRef).value = JSON.stringify(arrsData);
 
@@ -159,9 +149,8 @@ var updateInputs = function() {
     }
 };
 
-for (var i = 0; i < levelPoints.length; i++) { 
-    levelPoints[i].p.on('drag', updateInputs); 
-}
+// רישום אירועי גרירה
+for (var i = 0; i < levelPoints.length; i++) { levelPoints[i].p.on('drag', updateInputs); }
 for (var j = 0; j < arrows.length; j++) { 
     arrows[j].p1.on('drag', updateInputs); 
     arrows[j].p2.on('drag', updateInputs); 
