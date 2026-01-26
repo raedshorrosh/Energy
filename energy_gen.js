@@ -13,7 +13,9 @@ var board = JXG.JSXGraph.initBoard(divid, {
 });
 
 // 1. Config from Maxima
-var xp = {#Axis_p#}, len = {#l_length#};
+// Added fallback for Axis_p to prevent "not defined" errors
+var xp = (typeof {#Axis_p#} !== 'undefined') ? {#Axis_p#} : -5;
+var len = {#l_length#};
 var isFixed = {#levels_fixed#}, startY = {#levels_y_init#}, labels = {#levels_txt#};
 var arrLabels = {#arrow_labels#};
 var rqm = "{#rqm#}"; // Unique ID to find the feedback span
