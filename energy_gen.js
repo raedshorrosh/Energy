@@ -2,7 +2,7 @@
   input-ref-levelsRef='levelsRef' 
   input-ref-arrowsRef='arrowsRef'
   input-ref-chemLabelsRef='chemLabelsRef']]
-//1.0
+//2.0
 var board = JXG.JSXGraph.initBoard(divid, {
     boundingbox: [-25, 15, 25, -15], 
     axis: false, 
@@ -12,13 +12,16 @@ var board = JXG.JSXGraph.initBoard(divid, {
     zoom: {enabled: false}
 });
 
-// 1. Config from Maxima
+// 1. Config from Maxima with ReferenceError Protection
 var xp = Number("{#Axis_p#}") || -5;
 var len = Number("{#l_length#}") || 25;
-var isFixed = {#levels_fixed#};
-var startY = {#levels_y_init#};
-var labels = {#levels_txt#};
-var arrLabels = {#arrow_labels#};
+
+// Wrapping these in try-catch or typeof checks to prevent "is not defined" crashes
+var isFixed = (typeof {#levels_fixed#} !== 'undefined') ? {#levels_fixed#} : [0,0,0,1];
+var startY = (typeof {#levels_y_init#} !== 'undefined') ? {#levels_y_init#} : [10, 5, 2, -8];
+var labels = (typeof {#levels_txt#} !== 'undefined') ? {#levels_txt#} : ["L1", "L2", "L3", "L4"];
+var arrLabels = (typeof {#arrow_labels#} !== 'undefined') ? {#arrow_labels#} : ["A1", "A2", "A3", "A4", "A5"];
+
 var enthalpy_txt = '{@enthalpy_label@}'; 
 var rqm = '{@rqm@}'; 
 
