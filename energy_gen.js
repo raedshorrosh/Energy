@@ -2,7 +2,7 @@
   input-ref-levelsRef='levelsRef' 
   input-ref-arrowsRef='arrowsRef' 
   input-ref-chemLabelsRef='chemLabelsRef']]
-//7.0
+//8.0
 var board = JXG.JSXGraph.initBoard(divid, {
     boundingbox: [-25, 15, 25, -15], 
     axis: false, 
