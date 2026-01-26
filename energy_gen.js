@@ -2,7 +2,7 @@
   input-ref-levelsRef='levelsRef' 
   input-ref-arrowsRef='arrowsRef'
   input-ref-chemLabelsRef='chemLabelsRef']]
-//2.0
+//3.0
 var board = JXG.JSXGraph.initBoard(divid, {
     boundingbox: [-25, 15, 25, -15], 
     axis: false, 
@@ -16,7 +16,6 @@ var board = JXG.JSXGraph.initBoard(divid, {
 var xp = Number("{#Axis_p#}") || -5;
 var len = Number("{#l_length#}") || 25;
 
-// Wrapping these in try-catch or typeof checks to prevent "is not defined" crashes
 var isFixed = (typeof {#levels_fixed#} !== 'undefined') ? {#levels_fixed#} : [0,0,0,1];
 var startY = (typeof {#levels_y_init#} !== 'undefined') ? {#levels_y_init#} : [10, 5, 2, -8];
 var labels = (typeof {#levels_txt#} !== 'undefined') ? {#levels_txt#} : ["L1", "L2", "L3", "L4"];
@@ -46,7 +45,7 @@ for (var i = 0; i < labels.length; i++) {
         var p = board.create('point', [xp + 1, currentLevelsY[idx]], {
             name: '', 
             fixed: isFixed[idx] == 1, 
-            moveAlongX: false, 
+            moveAlongX: false, // Prevent horizontal movement
             size: 4, color: 'blue', strokeColor: 'black', showInfobox: false
         });
 
@@ -75,8 +74,22 @@ var currentArrows = safeLoad(arrowsRef, defaultArrows);
 
 for (var j = 0; j < arrLabels.length; j++) {
     (function(idx) {
-        var p1 = board.create('point', currentArrows[idx][0], {name: '', color: colors[idx % 5], size: 4, face: '[]', showInfobox: false});
-        var p2 = board.create('point', currentArrows[idx][1], {name: '', color: colors[idx % 5], size: 2, showInfobox: false});
+        // moveAlongX: false added to both points of the arrow
+        var p1 = board.create('point', currentArrows[idx][0], {
+            name: '', 
+            color: colors[idx % 5], 
+            size: 4, 
+            face: '[]', 
+            moveAlongX: false, 
+            showInfobox: false
+        });
+        var p2 = board.create('point', currentArrows[idx][1], {
+            name: '', 
+            color: colors[idx % 5], 
+            size: 2, 
+            moveAlongX: false, 
+            showInfobox: false
+        });
         
         var seg = board.create('segment', [p1, p2], {
             strokeColor: colors[idx % 5], strokeWidth: 3, lastarrow: {type: 2, size: 6}
@@ -92,7 +105,7 @@ for (var j = 0; j < arrLabels.length; j++) {
     })(j);
 }
 
-// 5. Visual Feedback Logic - Simplified for STACK Parser
+// 5. Visual Feedback Logic
 var feedbackEl = document.getElementById(rqm);
 if (feedbackEl) {
     var raw = feedbackEl.innerHTML;
@@ -117,7 +130,7 @@ if (feedbackEl) {
     }
 }
 
-// Global Sync - Removed high-level array methods to satisfy STACK filter
+// Global Sync
 var updateInputs = function() {
     var lvlsData = [];
     for (var a = 0; a < levelPoints.length; a++) { 
@@ -139,7 +152,6 @@ var updateInputs = function() {
     }
     document.getElementById(chemLabelsRef).value = JSON.stringify(chemsData);
     
-    // Trigger changes manually
     var targetIds = [levelsRef, arrowsRef, chemLabelsRef];
     for (var d = 0; d < targetIds.length; d++) {
         var el = document.getElementById(targetIds[d]);
