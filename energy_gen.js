@@ -2,7 +2,7 @@
   input-ref-levelsRef='levelsRef' 
   input-ref-arrowsRef='arrowsRef' 
   input-ref-chemLabelsRef='chemLabelsRef']]
-\\10.0
+//11.0
 var board = JXG.JSXGraph.initBoard(divid, {
     boundingbox: [-25, 15, 25, -15], 
     axis: false, 
@@ -12,14 +12,16 @@ var board = JXG.JSXGraph.initBoard(divid, {
     zoom: {enabled: false}
 });
 
-// 1. Config from Maxima
+// 1. Config from Maxima (Using safer substitution wrappers)
 var xp = Number("{#Axis_p#}") || -5;
 var len = Number("{#l_length#}") || 25;
-var isFixed = (typeof {#levels_fixed#} !== 'undefined') ? {#levels_fixed#} : [0, 0, 1];
-var startY = (typeof {#levels_y_init#} !== 'undefined') ? {#levels_y_init#} : [10, 2, -6]; 
-var labels = (typeof {#levels_txt#} !== 'undefined') ? {#levels_txt#} : ["\\( H_2O_{(g)} \\)", "\\( H_2O_{(l)} \\)", "\\( H_2O_{(s)} \\)"];
-var arrLabels = (typeof {#arrow_labels#} !== 'undefined') ? {#arrow_labels#} : ["\\( \Delta H_m \\)", "\\( \Delta H_b \\)", "\\( \Delta H_s \\)"];
 var rqm = "{#rqm#}";
+
+// Safely parse Maxima lists/arrays
+var isFixed = {#levels_fixed#};
+var startY = {#levels_y_init#};
+var labels = {#levels_txt#};
+var arrLabels = {#arrow_labels#};
 
 var safeLoad = function(ref, def) {
     var el = document.getElementById(ref);
@@ -134,4 +136,3 @@ arrows.forEach(function(obj) {
 
 board.update();
 [[/jsxgraph]]
-
