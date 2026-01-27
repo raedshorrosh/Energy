@@ -1,4 +1,4 @@
-// Version: 1.1
+// Version: 1.2
 [[jsxgraph width="600px" height="500px" 
   input-ref-levelsRef='levelsRef' 
   input-ref-arrowsRef='arrowsRef' 
@@ -102,7 +102,7 @@ for (var j = 0; j < arrLabels.length; j++) {
 
         var seg = board.create('segment', [p1, p2], {strokeColor: colors[idx % 3], strokeWidth: 3, lastarrow: {type: 2, size: 6}});
         
-        // Arrow Labels: Directly created with the arrow segment as an attractor
+        // Arrow Labels: Draggable but attracted to the arrow line
         board.create('text', [
             function(){ return (p1.X() + p2.X()) / 2 + 0.5; }, 
             function(){ return (p1.Y() + p2.Y()) / 2; }, 
@@ -111,6 +111,7 @@ for (var j = 0; j < arrLabels.length; j++) {
             color: colors[idx % 3], 
             useMathJax: true, 
             fontSize: 14,
+            fixed: false, // Allows movement
             attractors: [seg],
             attractorDistance: 10,
             snatchDistance: 1000
