@@ -2,7 +2,7 @@
   input-ref-levelsRef='levelsRef' 
   input-ref-arrowsRef='arrowsRef' 
   input-ref-chemLabelsRef='chemLabelsRef']]
-
+//13
 var board = JXG.JSXGraph.initBoard(divid, {
     boundingbox: [-25, 15, 25, -15], 
     axis: false, 
@@ -38,7 +38,7 @@ board.create('text', [xp - 1.5, 0, "{@enthalpy_label@}"], {rotate: 90, fontSize:
 var levelPoints = [];
 var currentLevelsY = safeLoad(levelsRef, startY);
 var levelX = xp + 1;
-var levelSegments = []; // Shared list for attractors
+var levelSegments = []; 
 
 for (var i = 0; i < labels.length; i++) {
     (function(idx) {
@@ -64,15 +64,15 @@ for (var i = 0; i < labels.length; i++) {
 // 4. Arrows
 var arrows = [];
 var colors = ['#3498db', '#e74c3c', '#2ecc71'];
-var arrowX = xp - 12;
 var defaultArrows = [];
 for (var k = 0; k < arrLabels.length; k++) {
-    defaultArrows.push([[arrowX, 5 - (k * 4)], [arrowX, 2 - (k * 4)]]);
+    defaultArrows.push([[xp - 12, 5 - (k * 4)], [xp - 12, 2 - (k * 4)]]);
 }
 var currentArrows = safeLoad(arrowsRef, defaultArrows);
 
 for (var j = 0; j < arrLabels.length; j++) {
     (function(idx) {
+        // p1 is the Square (Start), p2 is the Circle (Head)
         var p1 = board.create('point', currentArrows[idx][0], {
             name: '', color: colors[idx % 3], size: 4, face: '[]', showInfobox: false,
             attractors: levelSegments,
@@ -81,21 +81,27 @@ for (var j = 0; j < arrLabels.length; j++) {
         });
         
         var p2 = board.create('point', currentArrows[idx][1], {
-            name: '', color: colors[idx % 3], size: 2, showInfobox: false,
+            name: '', color: colors[idx % 3], size: 4, face: 'o', showInfobox: false,
             attractors: levelSegments,
             attractorDistance: 0.5,
             snatchDistance: 1.0
         });
 
-        // Horizontal lock logic + force update after snapping
-        p1.on('drag', function() { p1.moveTo([arrowX, p1.Y()]); });
-        p2.on('drag', function() { p2.moveTo([arrowX, p2.Y()]); });
+        // Circle (p2) follows Square (p1) in X direction
+        p1.on('drag', function() {
+            p2.moveTo([p1.X(), p2.Y()]);
+        });
+        
+        // Square (p1) follows Circle (p2) in X direction
+        p2.on('drag', function() {
+            p1.moveTo([p2.X(), p1.Y()]);
+        });
 
         var seg = board.create('segment', [p1, p2], {strokeColor: colors[idx % 3], strokeWidth: 3, lastarrow: {type: 2, size: 6}});
         
         board.create('text', [function(){ return (p1.X() + p2.X()) / 2 + 0.5; }, function(){ return (p1.Y() + p2.Y()) / 2; }, arrLabels[idx]], { color: colors[idx % 3], useMathJax: true, fontSize: 14 });
         
-        arrows.push({p1: p1, p2: p2, seg: seg, x: arrowX});
+        arrows.push({p1: p1, p2: p2, seg: seg});
     })(j);
 }
 
@@ -117,7 +123,7 @@ if (feedbackEl) {
     } catch(e) {}
 }
 
-// 6. Data Sync (Using 'up' to ensure snap is finalized before saving)
+// 6. Data Sync
 var updateInputs = function() {
     document.getElementById(levelsRef).value = JSON.stringify(levelPoints.map(function(obj) { return obj.p.Y(); }));
     document.getElementById(arrowsRef).value = JSON.stringify(arrows.map(function(obj) { return [[obj.p1.X(), obj.p1.Y()], [obj.p2.X(), obj.p2.Y()]]; }));
@@ -129,7 +135,6 @@ var updateInputs = function() {
     });
 };
 
-// Register events
 levelPoints.forEach(function(obj) { 
     obj.p.on('drag', updateInputs); 
     obj.p.on('up', updateInputs); 
