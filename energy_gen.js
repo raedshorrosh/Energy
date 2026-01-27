@@ -1,4 +1,4 @@
-// Version: 1.3
+// Version: 1.4
 [[jsxgraph width="600px" height="500px" 
   input-ref-levelsRef='levelsRef' 
   input-ref-arrowsRef='arrowsRef' 
@@ -63,7 +63,7 @@ for (var i = 0; i < labels.length; i++) {
         ], { 
             useMathJax: true, 
             fontSize: 14, 
-            fixed: isFixed[idx] == 1 
+            fixed: true 
         });
         
         levelPoints.push({p: p, seg: seg, x: levelX});
@@ -102,17 +102,16 @@ for (var j = 0; j < arrLabels.length; j++) {
 
         var seg = board.create('segment', [p1, p2], {strokeColor: colors[idx % 3], strokeWidth: 3, lastarrow: {type: 2, size: 6}});
         
-        // Arrow Labels: Draggable and snapped via attractors. 
-        // We use static initial coordinates so JSXGraph allows dragging.
-        board.create('text', [
-            (currentArrows[idx][0][0] + currentArrows[idx][1][0]) / 2 + 0.5, 
-            (currentArrows[idx][0][1] + currentArrows[idx][1][1]) / 2, 
-            arrLabels[idx]
-        ], { 
+        // Arrow Labels: Draggable along the arrow line
+        // Using static numbers for coords so they aren't 'bound' to the midpoint formula
+        var initialX = (currentArrows[idx][0][0] + currentArrows[idx][1][0]) / 2 + 0.5;
+        var initialY = (currentArrows[idx][0][1] + currentArrows[idx][1][1]) / 2;
+
+        board.create('text', [initialX, initialY, arrLabels[idx]], { 
             color: colors[idx % 3], 
             useMathJax: true, 
             fontSize: 14,
-            fixed: false, 
+            fixed: false, // Essential for moveability
             attractors: [seg],
             attractorDistance: 10,
             snatchDistance: 1000
