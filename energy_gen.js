@@ -2,7 +2,7 @@
   input-ref-levelsRef='levelsRef' 
   input-ref-arrowsRef='arrowsRef' 
   input-ref-chemLabelsRef='chemLabelsRef']]
-//13
+// 14
 var board = JXG.JSXGraph.initBoard(divid, {
     boundingbox: [-25, 15, 25, -15], 
     axis: false, 
@@ -81,7 +81,7 @@ for (var j = 0; j < arrLabels.length; j++) {
         });
         
         var p2 = board.create('point', currentArrows[idx][1], {
-            name: '', color: colors[idx % 3], size: 4, face: 'o', showInfobox: false,
+            name: '', color: colors[idx % 3], size: 2, face: 'o', showInfobox: false, // Reduced size from 4 to 2
             attractors: levelSegments,
             attractorDistance: 0.5,
             snatchDistance: 1.0
