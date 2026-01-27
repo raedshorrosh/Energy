@@ -1,8 +1,9 @@
+// Version: 1.1
 [[jsxgraph width="600px" height="500px" 
   input-ref-levelsRef='levelsRef' 
   input-ref-arrowsRef='arrowsRef' 
   input-ref-chemLabelsRef='chemLabelsRef']]
-//20.0
+
 var board = JXG.JSXGraph.initBoard(divid, {
     boundingbox: [-25, 15, 25, -15], 
     axis: false, 
@@ -54,7 +55,7 @@ for (var i = 0; i < labels.length; i++) {
             strokeColor: 'black', strokeWidth: 3 
         });
         
-        // Reverted Chemical Labels: Positioned relative to level point p
+        // Chemical Labels: Positioned relative to level point p
         board.create('text', [
             function(){ return p.X() + 2; }, 
             function(){ return p.Y() + 0.6; }, 
@@ -101,22 +102,18 @@ for (var j = 0; j < arrLabels.length; j++) {
 
         var seg = board.create('segment', [p1, p2], {strokeColor: colors[idx % 3], strokeWidth: 3, lastarrow: {type: 2, size: 6}});
         
-        // Arrow Labels: Stuck to the arrow segment using aggressive attractors
-        var arrowLabelAnchor = board.create('point', [
+        // Arrow Labels: Directly created with the arrow segment as an attractor
+        board.create('text', [
             function(){ return (p1.X() + p2.X()) / 2 + 0.5; }, 
-            function(){ return (p1.Y() + p2.Y()) / 2; }
-        ], {
-            visible: false,
+            function(){ return (p1.Y() + p2.Y()) / 2; }, 
+            arrLabels[idx]
+        ], { 
+            color: colors[idx % 3], 
+            useMathJax: true, 
+            fontSize: 14,
             attractors: [seg],
             attractorDistance: 10,
             snatchDistance: 1000
-        });
-
-        board.create('text', [0, 0, arrLabels[idx]], { 
-            anchor: arrowLabelAnchor,
-            color: colors[idx % 3], 
-            useMathJax: true, 
-            fontSize: 14 
         });
         
         arrows.push({p1: p1, p2: p2, seg: seg});
