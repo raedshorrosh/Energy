@@ -2,7 +2,7 @@
   input-ref-levelsRef='levelsRef' 
   input-ref-arrowsRef='arrowsRef' 
   input-ref-chemLabelsRef='chemLabelsRef']]
-// 14
+//20.0
 var board = JXG.JSXGraph.initBoard(divid, {
     boundingbox: [-25, 15, 25, -15], 
     axis: false, 
@@ -54,7 +54,16 @@ for (var i = 0; i < labels.length; i++) {
             strokeColor: 'black', strokeWidth: 3 
         });
         
-        board.create('text', [function(){ return p.X() + 2; }, function(){ return p.Y() + 0.6; }, labels[idx]], { useMathJax: true, fontSize: 14, fixed: true });
+        // Reverted Chemical Labels: Positioned relative to level point p
+        board.create('text', [
+            function(){ return p.X() + 2; }, 
+            function(){ return p.Y() + 0.6; }, 
+            labels[idx]
+        ], { 
+            useMathJax: true, 
+            fontSize: 14, 
+            fixed: isFixed[idx] == 1 
+        });
         
         levelPoints.push({p: p, seg: seg, x: levelX});
         levelSegments.push(seg);
@@ -72,7 +81,6 @@ var currentArrows = safeLoad(arrowsRef, defaultArrows);
 
 for (var j = 0; j < arrLabels.length; j++) {
     (function(idx) {
-        // p1 is the Square (Start), p2 is the Circle (Head)
         var p1 = board.create('point', currentArrows[idx][0], {
             name: '', color: colors[idx % 3], size: 4, face: '[]', showInfobox: false,
             attractors: levelSegments,
@@ -81,25 +89,35 @@ for (var j = 0; j < arrLabels.length; j++) {
         });
         
         var p2 = board.create('point', currentArrows[idx][1], {
-            name: '', color: colors[idx % 3], size: 2, face: 'o', showInfobox: false, // Reduced size from 4 to 2
+            name: '', color: colors[idx % 3], size: 2, face: 'o', showInfobox: false,
             attractors: levelSegments,
             attractorDistance: 0.5,
             snatchDistance: 1.0
         });
 
-        // Circle (p2) follows Square (p1) in X direction
-        p1.on('drag', function() {
-            p2.moveTo([p1.X(), p2.Y()]);
-        });
-        
-        // Square (p1) follows Circle (p2) in X direction
-        p2.on('drag', function() {
-            p1.moveTo([p2.X(), p1.Y()]);
-        });
+        // Sync X-axis movement
+        p1.on('drag', function() { p2.moveTo([p1.X(), p2.Y()]); });
+        p2.on('drag', function() { p1.moveTo([p2.X(), p1.Y()]); });
 
         var seg = board.create('segment', [p1, p2], {strokeColor: colors[idx % 3], strokeWidth: 3, lastarrow: {type: 2, size: 6}});
         
-        board.create('text', [function(){ return (p1.X() + p2.X()) / 2 + 0.5; }, function(){ return (p1.Y() + p2.Y()) / 2; }, arrLabels[idx]], { color: colors[idx % 3], useMathJax: true, fontSize: 14 });
+        // Arrow Labels: Stuck to the arrow segment using aggressive attractors
+        var arrowLabelAnchor = board.create('point', [
+            function(){ return (p1.X() + p2.X()) / 2 + 0.5; }, 
+            function(){ return (p1.Y() + p2.Y()) / 2; }
+        ], {
+            visible: false,
+            attractors: [seg],
+            attractorDistance: 10,
+            snatchDistance: 1000
+        });
+
+        board.create('text', [0, 0, arrLabels[idx]], { 
+            anchor: arrowLabelAnchor,
+            color: colors[idx % 3], 
+            useMathJax: true, 
+            fontSize: 14 
+        });
         
         arrows.push({p1: p1, p2: p2, seg: seg});
     })(j);
@@ -127,7 +145,11 @@ if (feedbackEl) {
 var updateInputs = function() {
     document.getElementById(levelsRef).value = JSON.stringify(levelPoints.map(function(obj) { return obj.p.Y(); }));
     document.getElementById(arrowsRef).value = JSON.stringify(arrows.map(function(obj) { return [[obj.p1.X(), obj.p1.Y()], [obj.p2.X(), obj.p2.Y()]]; }));
-    document.getElementById(chemLabelsRef).value = JSON.stringify(levelPoints.map(function(obj) { return [obj.p.X() + 2, obj.p.Y() + 0.6]; }));
+    
+    // Save chemical labels based on current level positions
+    document.getElementById(chemLabelsRef).value = JSON.stringify(levelPoints.map(function(obj) { 
+        return [obj.p.X() + 2, obj.p.Y() + 0.6]; 
+    }));
     
     [levelsRef, arrowsRef, chemLabelsRef].forEach(function(id) {
         var el = document.getElementById(id);
