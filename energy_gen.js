@@ -2,7 +2,7 @@
   input-ref-levelsRef='levelsRef' 
   input-ref-arrowsRef='arrowsRef' 
   input-ref-chemLabelsRef='chemLabelsRef']]
-//12.0
+
 var board = JXG.JSXGraph.initBoard(divid, {
     boundingbox: [-25, 15, 25, -15], 
     axis: false, 
@@ -38,6 +38,7 @@ board.create('text', [xp - 1.5, 0, "{@enthalpy_label@}"], {rotate: 90, fontSize:
 var levelPoints = [];
 var currentLevelsY = safeLoad(levelsRef, startY);
 var levelX = xp + 1;
+var levelSegments = []; // Shared list for attractors
 
 for (var i = 0; i < labels.length; i++) {
     (function(idx) {
@@ -45,7 +46,6 @@ for (var i = 0; i < labels.length; i++) {
             name: '', fixed: isFixed[idx] == 1, size: 4, color: 'blue', strokeColor: 'black', showInfobox: false
         });
         
-        // Strict horizontal lock for energy levels
         p.on('drag', function() {
             p.moveTo([levelX, p.Y()]);
         });
@@ -57,6 +57,7 @@ for (var i = 0; i < labels.length; i++) {
         board.create('text', [function(){ return p.X() + 2; }, function(){ return p.Y() + 0.6; }, labels[idx]], { useMathJax: true, fontSize: 14, fixed: true });
         
         levelPoints.push({p: p, seg: seg, x: levelX});
+        levelSegments.push(seg);
     })(i);
 }
 
@@ -72,23 +73,21 @@ var currentArrows = safeLoad(arrowsRef, defaultArrows);
 
 for (var j = 0; j < arrLabels.length; j++) {
     (function(idx) {
-        var attractorsList = levelPoints.map(function(lp) { return lp.seg; });
-
         var p1 = board.create('point', currentArrows[idx][0], {
             name: '', color: colors[idx % 3], size: 4, face: '[]', showInfobox: false,
-            attractors: attractorsList,
-            attractorDistance: 0.8,
+            attractors: levelSegments,
+            attractorDistance: 0.5,
             snatchDistance: 1.0
         });
         
         var p2 = board.create('point', currentArrows[idx][1], {
             name: '', color: colors[idx % 3], size: 2, showInfobox: false,
-            attractors: attractorsList,
-            attractorDistance: 0.8,
+            attractors: levelSegments,
+            attractorDistance: 0.5,
             snatchDistance: 1.0
         });
 
-        // Strict horizontal lock for arrow points
+        // Horizontal lock logic + force update after snapping
         p1.on('drag', function() { p1.moveTo([arrowX, p1.Y()]); });
         p2.on('drag', function() { p2.moveTo([arrowX, p2.Y()]); });
 
@@ -118,7 +117,7 @@ if (feedbackEl) {
     } catch(e) {}
 }
 
-// 6. Data Sync
+// 6. Data Sync (Using 'up' to ensure snap is finalized before saving)
 var updateInputs = function() {
     document.getElementById(levelsRef).value = JSON.stringify(levelPoints.map(function(obj) { return obj.p.Y(); }));
     document.getElementById(arrowsRef).value = JSON.stringify(arrows.map(function(obj) { return [[obj.p1.X(), obj.p1.Y()], [obj.p2.X(), obj.p2.Y()]]; }));
@@ -130,10 +129,16 @@ var updateInputs = function() {
     });
 };
 
-levelPoints.forEach(function(obj) { obj.p.on('drag', updateInputs); });
+// Register events
+levelPoints.forEach(function(obj) { 
+    obj.p.on('drag', updateInputs); 
+    obj.p.on('up', updateInputs); 
+});
 arrows.forEach(function(obj) { 
     obj.p1.on('drag', updateInputs); 
+    obj.p1.on('up', updateInputs); 
     obj.p2.on('drag', updateInputs); 
+    obj.p2.on('up', updateInputs); 
 });
 
 board.update();
