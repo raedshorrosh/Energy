@@ -1,4 +1,4 @@
-// Version: 1.5
+// Version: 1.6
 [[jsxgraph width="600px" height="500px" 
   input-ref-levelsRef='levelsRef' 
   input-ref-arrowsRef='arrowsRef' 
@@ -16,13 +16,17 @@ var board = JXG.JSXGraph.initBoard(divid, {
 // 1. Config from Maxima
 var xp = Number("{#Axis_p#}") || -5;
 var len = Number("{#l_length#}") || 25;
-var chemOff = Number("{#chem_y_offset#}") || 0.6; // Read offset from Maxima
+var chemOff = Number("{#chem_y_offset#}") || 0.6; 
 var rqm = "{#rqm#}";
 
 var isFixed = {#levels_fixed#};
 var startY = {#levels_y_init#};
 var labels = {#levels_txt#};
 var arrLabels = {#arrow_labels#};
+
+// NEW: Check if chemical labels should be fixed or moveable
+// If not defined in Maxima, default to fixed (1)
+var chemsFixed = (typeof {#chems_fixed#} !== 'undefined') ? {#chems_fixed#} : labels.map(function() { return 1; });
 
 var safeLoad = function(ref, def) {
     var el = document.getElementById(ref);
@@ -48,27 +52,54 @@ for (var i = 0; i < labels.length; i++) {
             name: '', fixed: isFixed[idx] == 1, size: 4, color: 'blue', strokeColor: 'black', showInfobox: false
         });
         
-        // Snap to X-axis
         p.on('drag', function() { p.moveTo([levelX, p.Y()]); });
 
         var seg = board.create('segment', [p, [function(){ return p.X() + len; }, function(){ return p.Y(); }]], { 
             strokeColor: 'black', strokeWidth: 3 
         });
         
-        // Chemical Labels: Dynamically follow the point p
-        board.create('text', [
-            function(){ return p.X() + 2; }, 
-            function(){ return p.Y() + chemOff; }, 
+        levelPoints.push({p: p, seg: seg});
+        levelSegments.push(seg);
+    })(i);
+}
+
+// 3b. Chemical Labels (Moveable or Fixed)
+var chemPoints = [];
+var initChemPos = labels.map(function(l, idx) { 
+    return [levelX + 2, currentLevelsY[idx] + chemOff]; 
+});
+var currentChems = safeLoad(chemLabelsRef, initChemPos);
+
+for (var c = 0; c < labels.length; c++) {
+    (function(idx) {
+        var isChemFixed = (chemsFixed[idx] == 1);
+        
+        // If moveable, we create a point that the text follows
+        var cp = board.create('point', currentChems[idx], {
+            name: '', 
+            fixed: isChemFixed, 
+            size: isChemFixed ? 0 : 3, 
+            color: 'orange', 
+            strokeColor: 'black',
+            showInfobox: false,
+            // Add attractors if they are meant to be dropped on lines
+            attractors: levelSegments,
+            attractorDistance: 0.5,
+            snatchDistance: 1.0
+        });
+
+        var txt = board.create('text', [
+            function(){ return cp.X() + (isChemFixed ? 0 : 0.5); }, 
+            function(){ return cp.Y() + (isChemFixed ? 0 : 0.2); }, 
             labels[idx]
         ], { 
             useMathJax: true, 
             fontSize: 14, 
-            fixed: true 
+            fixed: isChemFixed 
         });
         
-        levelPoints.push({p: p, seg: seg});
-        levelSegments.push(seg);
-    })(i);
+        chemPoints.push(cp);
+    })(c);
 }
 
 // 4. Arrows
@@ -92,7 +123,6 @@ for (var j = 0; j < arrLabels.length; j++) {
             attractors: levelSegments, attractorDistance: 0.5, snatchDistance: 1.0
         });
 
-        // Sync X-axis for arrows
         p1.on('drag', function() { p2.moveTo([p1.X(), p2.Y()]); });
         p2.on('drag', function() { p1.moveTo([p2.X(), p1.Y()]); });
 
@@ -132,7 +162,7 @@ if (feedbackEl && feedbackEl.innerHTML.length > 5) {
 var updateInputs = function() {
     var lvls = levelPoints.map(function(obj) { return obj.p.Y(); });
     var arrs = arrows.map(function(obj) { return [[obj.p1.X(), obj.p1.Y()], [obj.p2.X(), obj.p2.Y()]]; });
-    var chems = levelPoints.map(function(obj) { return [obj.p.X() + 2, obj.p.Y() + chemOff]; });
+    var chems = chemPoints.map(function(p) { return [p.X(), p.Y()]; });
 
     document.getElementById(levelsRef).value = JSON.stringify(lvls);
     document.getElementById(arrowsRef).value = JSON.stringify(arrs);
@@ -144,7 +174,14 @@ var updateInputs = function() {
     });
 };
 
-levelPoints.forEach(function(obj) { obj.p.on('drag', updateInputs); obj.p.on('up', updateInputs); });
+levelPoints.forEach(function(obj) { 
+    obj.p.on('drag', updateInputs); 
+    obj.p.on('up', updateInputs); 
+});
+chemPoints.forEach(function(p) {
+    p.on('drag', updateInputs);
+    p.on('up', updateInputs);
+});
 arrows.forEach(function(obj) { 
     obj.p1.on('drag', updateInputs); obj.p1.on('up', updateInputs); 
     obj.p2.on('drag', updateInputs); obj.p2.on('up', updateInputs); 
