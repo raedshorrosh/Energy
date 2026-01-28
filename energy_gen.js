@@ -1,4 +1,4 @@
-// Version: 1.8
+// Version: 1.15 (Based on 1.7 with high-strength draggable arrow labels)
 [[jsxgraph width="600px" height="500px" 
   input-ref-levelsRef='levelsRef' 
   input-ref-arrowsRef='arrowsRef' 
@@ -49,7 +49,6 @@ for (var i = 0; i < labels.length; i++) {
             name: '', fixed: isFixed[idx] == 1, size: 4, color: 'blue', strokeColor: 'black', showInfobox: false
         });
         
-        // Horizontal lock via point listener
         p.on('drag', function() { p.moveTo([levelX, p.Y()]); });
 
         var seg = board.create('segment', [p, [function(){ return p.X() + len; }, function(){ return p.Y(); }]], { 
@@ -61,7 +60,7 @@ for (var i = 0; i < labels.length; i++) {
     })(i);
 }
 
-// 3b. Chemical Labels
+// 3b. Chemical Labels (Moveable or Fixed)
 var chemTexts = [];
 var initChemPos = labels.map(function(l, idx) { 
     return [levelX + 2, currentLevelsY[idx] + chemOff]; 
@@ -97,10 +96,9 @@ for (var c = 0; c < labels.length; c++) {
 // 4. Arrows
 var arrows = [];
 var colors = ['#3498db', '#e74c3c', '#2ecc71'];
-var arrowX = xp - 12;
 var defaultArrows = [];
 for (var k = 0; k < arrLabels.length; k++) {
-    defaultArrows.push([[arrowX, 5 - (k * 4)], [arrowX, 2 - (k * 4)]]);
+    defaultArrows.push([[xp - 12, 5 - (k * 4)], [xp - 12, 2 - (k * 4)]]);
 }
 var currentArrows = safeLoad(arrowsRef, defaultArrows);
 
@@ -116,18 +114,12 @@ for (var j = 0; j < arrLabels.length; j++) {
             attractors: levelSegments, attractorDistance: 0.5, snatchDistance: 1.0
         });
 
-        // Sync points and lock X via point listeners
-        p1.on('drag', function() { 
-            p1.moveTo([arrowX, p1.Y()]);
-            p2.moveTo([arrowX, p2.Y()]); 
-        });
-        p2.on('drag', function() { 
-            p1.moveTo([arrowX, p1.Y()]);
-            p2.moveTo([arrowX, p2.Y()]); 
-        });
+        p1.on('drag', function() { p2.moveTo([p1.X(), p2.Y()]); });
+        p2.on('drag', function() { p1.moveTo([p2.X(), p1.Y()]); });
 
         var seg = board.create('segment', [p1, p2], {strokeColor: colors[idx % 3], strokeWidth: 3, lastarrow: {type: 2, size: 6}});
         
+        // High-strength magnetic draggable label
         board.create('text', [
             function() { return (p1.X() + p2.X()) / 2 + 0.5; }, 
             function() { return (p1.Y() + p2.Y()) / 2; }, 
@@ -136,7 +128,11 @@ for (var j = 0; j < arrLabels.length; j++) {
             color: colors[idx % 3], 
             useMathJax: true, 
             fontSize: 14,
-            fixed: true
+            fixed: false,
+            isDraggable: true,
+            attractors: [seg],
+            attractorDistance: 10,
+            snatchDistance: 1000
         });
         
         arrows.push({p1: p1, p2: p2, seg: seg});
