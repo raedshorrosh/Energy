@@ -1,4 +1,4 @@
-// Version: 1.15 (Based on 1.7 with high-strength draggable arrow labels)
+// Version: 1.8
 [[jsxgraph width="600px" height="500px" 
   input-ref-levelsRef='levelsRef' 
   input-ref-arrowsRef='arrowsRef' 
@@ -60,7 +60,7 @@ for (var i = 0; i < labels.length; i++) {
     })(i);
 }
 
-// 3b. Chemical Labels (Moveable or Fixed)
+// 3b. Chemical Labels (Moveable or Fixed) - Drag Text Directly
 var chemTexts = [];
 var initChemPos = labels.map(function(l, idx) { 
     return [levelX + 2, currentLevelsY[idx] + chemOff]; 
@@ -71,25 +71,33 @@ for (var c = 0; c < labels.length; c++) {
     (function(idx) {
         var isChemFixed = (chemsFixed[idx] == 1);
         
-        var cp = board.create('point', [currentChems[idx][0], currentChems[idx][1]], {
-            name: '', 
-            fixed: isChemFixed, 
-            visible: !isChemFixed, 
-            size: 3, 
-            color: 'gray',
-            attractors: levelSegments, 
-            attractorDistance: 0.5, 
-            snatchDistance: 0.8
-        });
-
-        var txt = board.create('text', [function(){ return cp.X(); }, function(){ return cp.Y(); }, labels[idx]], { 
+        // We create the text element. If not fixed, we enable dragging on the text itself.
+        var txt = board.create('text', [currentChems[idx][0], currentChems[idx][1], labels[idx]], { 
             useMathJax: true, 
             fontSize: 14, 
-            fixed: true,
+            fixed: isChemFixed,
+            isDraggable: !isChemFixed,
             parse: false
         });
+
+        // Snap logic for the text if it's moveable
+        if (!isChemFixed) {
+            txt.on('drag', function() {
+                var currY = txt.Y();
+                var targetY = currY;
+                // Snap to levels accounting for the chem_y_offset
+                for (var l = 0; l < levelPoints.length; l++) {
+                    var lineY = levelPoints[l].p.Y();
+                    // If the text (minus offset) is close to the line
+                    if (Math.abs(currY - chemOff - lineY) < 0.7) {
+                        targetY = lineY + chemOff; 
+                    }
+                }
+                txt.moveTo([txt.X(), targetY]);
+            });
+        }
         
-        chemTexts.push({cp: cp, txt: txt});
+        chemTexts.push(txt);
     })(c);
 }
 
@@ -119,20 +127,12 @@ for (var j = 0; j < arrLabels.length; j++) {
 
         var seg = board.create('segment', [p1, p2], {strokeColor: colors[idx % 3], strokeWidth: 3, lastarrow: {type: 2, size: 6}});
         
-        // High-strength magnetic draggable label
         board.create('text', [
             function() { return (p1.X() + p2.X()) / 2 + 0.5; }, 
             function() { return (p1.Y() + p2.Y()) / 2; }, 
             arrLabels[idx]
         ], { 
-            color: colors[idx % 3], 
-            useMathJax: true, 
-            fontSize: 14,
-            fixed: false,
-            isDraggable: true,
-            attractors: [seg],
-            attractorDistance: 10,
-            snatchDistance: 1000
+            color: colors[idx % 3], useMathJax: true, fontSize: 14 
         });
         
         arrows.push({p1: p1, p2: p2, seg: seg});
@@ -143,7 +143,7 @@ for (var j = 0; j < arrLabels.length; j++) {
 var updateInputs = function() {
     var lvls = levelPoints.map(function(obj) { return obj.p.Y(); });
     var arrs = arrows.map(function(obj) { return [[obj.p1.X(), obj.p1.Y()], [obj.p2.X(), obj.p2.Y()]]; });
-    var chems = chemTexts.map(function(obj) { return [obj.cp.X(), obj.cp.Y()]; });
+    var chems = chemTexts.map(function(t) { return [t.X(), t.Y()]; });
 
     document.getElementById(levelsRef).value = JSON.stringify(lvls);
     document.getElementById(arrowsRef).value = JSON.stringify(arrs);
@@ -159,9 +159,9 @@ levelPoints.forEach(function(obj) {
     obj.p.on('drag', updateInputs); 
     obj.p.on('up', updateInputs); 
 });
-chemTexts.forEach(function(obj) {
-    obj.cp.on('drag', updateInputs);
-    obj.cp.on('up', updateInputs);
+chemTexts.forEach(function(t) {
+    t.on('drag', updateInputs);
+    t.on('up', updateInputs);
 });
 arrows.forEach(function(obj) { 
     obj.p1.on('drag', updateInputs); obj.p1.on('up', updateInputs); 
