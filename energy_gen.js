@@ -1,4 +1,4 @@
-// Version: 1.7
+// Version: 1.8
 [[jsxgraph width="600px" height="500px" 
   input-ref-levelsRef='levelsRef' 
   input-ref-arrowsRef='arrowsRef' 
@@ -85,10 +85,12 @@ for (var c = 0; c < labels.length; c++) {
             txt.on('drag', function() {
                 var currY = txt.Y();
                 var targetY = currY;
-                // Snap to levels
+                // Snap to levels accounting for the chem_y_offset
                 for (var l = 0; l < levelPoints.length; l++) {
-                    if (Math.abs(currY - levelPoints[l].p.Y()) < 0.7) {
-                        targetY = levelPoints[l].p.Y() + 0.2; // Slight offset so it sits above the line
+                    var lineY = levelPoints[l].p.Y();
+                    // If the text (minus offset) is close to the line
+                    if (Math.abs(currY - chemOff - lineY) < 0.7) {
+                        targetY = lineY + chemOff; 
                     }
                 }
                 txt.moveTo([txt.X(), targetY]);
