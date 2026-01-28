@@ -1,4 +1,4 @@
-// Version: 2.1
+// Version: 2.2
 [[jsxgraph width="600px" height="500px" 
   input-ref-levelsRef='levelsRef' 
   input-ref-arrowsRef='arrowsRef' 
@@ -132,8 +132,7 @@ for (var j = 0; j < arrLabels.length; j++) {
             function() { return (p1.Y() + p2.Y()) / 2; }, 
             arrLabels[idx]
         ], { 
-            attractors: [seg], attractorDistance: 10, snatchDistance: 100,fixed: false,
-            isDraggable: true,
+            attractors: [seg], attractorDistance: 10, snatchDistance: 100,showInfobox:false,
             color: colors[idx % 3], useMathJax: true, fontSize: 14 
         });
         
