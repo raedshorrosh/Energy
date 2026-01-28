@@ -1,4 +1,4 @@
-// Version: 1.12
+// Version: 1.14 (High-strength attractors for arrow labels)
 [[jsxgraph width="600px" height="500px" 
   input-ref-levelsRef='levelsRef' 
   input-ref-arrowsRef='arrowsRef' 
@@ -19,10 +19,10 @@ var len = Number("{#l_length#}") || 25;
 var chemOff = Number("{#chem_y_offset#}") || 0.6; 
 var rqm = "{#rqm#}";
 
-var isFixed = (typeof {#levels_fixed#} !== 'undefined') ? {#levels_fixed#} : [0, 0, 1];
-var startY = (typeof {#levels_y_init#} !== 'undefined') ? {#levels_y_init#} : [10, 2, -6]; 
-var labels = (typeof {#levels_txt#} !== 'undefined') ? {#levels_txt#} : ["\\( H_2O_{(g)} \\)", "\\( H_2O_{(l)} \\)", "\\( H_2O_{(s)} \\)"];
-var arrLabels = (typeof {#arrow_labels#} !== 'undefined') ? {#arrow_labels#} : ["\\( \\Delta H_m \\)", "\\( \\Delta H_b \\)", "\\( \\Delta H_s \\)"];
+var isFixed = {#levels_fixed#};
+var startY = {#levels_y_init#};
+var labels = {#levels_txt#};
+var arrLabels = {#arrow_labels#};
 var chemsFixed = (typeof {#chems_fixed#} !== 'undefined') ? {#chems_fixed#} : labels.map(function() { return 1; });
 
 var safeLoad = function(ref, def) {
@@ -60,7 +60,7 @@ for (var i = 0; i < labels.length; i++) {
     })(i);
 }
 
-// 3b. Chemical Labels (Direct Dragging)
+// 3b. Chemical Labels
 var chemTexts = [];
 var initChemPos = labels.map(function(l, idx) { 
     return [levelX + 2, currentLevelsY[idx] + chemOff]; 
@@ -70,24 +70,26 @@ var currentChems = safeLoad(chemLabelsRef, initChemPos);
 for (var c = 0; c < labels.length; c++) {
     (function(idx) {
         var isChemFixed = (chemsFixed[idx] == 1);
-        var txt = board.create('text', [currentChems[idx][0], currentChems[idx][1], labels[idx]], { 
-            useMathJax: true, fontSize: 14, fixed: isChemFixed, isDraggable: !isChemFixed, parse: false
+        
+        var cp = board.create('point', [currentChems[idx][0], currentChems[idx][1]], {
+            name: '', 
+            fixed: isChemFixed, 
+            visible: !isChemFixed, 
+            size: 3, 
+            color: 'gray',
+            attractors: levelSegments, 
+            attractorDistance: 0.5, 
+            snatchDistance: 0.8
         });
 
-        if (!isChemFixed) {
-            txt.on('drag', function() {
-                var currY = txt.Y();
-                var targetY = currY;
-                for (var l = 0; l < levelPoints.length; l++) {
-                    var lineY = levelPoints[l].p.Y();
-                    if (Math.abs(currY - chemOff - lineY) < 0.7) {
-                        targetY = lineY + chemOff; 
-                    }
-                }
-                txt.moveTo([txt.X(), targetY]);
-            });
-        }
-        chemTexts.push(txt);
+        var txt = board.create('text', [function(){ return cp.X(); }, function(){ return cp.Y(); }, labels[idx]], { 
+            useMathJax: true, 
+            fontSize: 14, 
+            fixed: true,
+            parse: false
+        });
+        
+        chemTexts.push({cp: cp, txt: txt});
     })(c);
 }
 
@@ -112,28 +114,25 @@ for (var j = 0; j < arrLabels.length; j++) {
             attractors: levelSegments, attractorDistance: 0.5, snatchDistance: 1.0
         });
 
-        // Sync points vertically
         p1.on('drag', function() { p2.moveTo([p1.X(), p2.Y()]); });
         p2.on('drag', function() { p1.moveTo([p2.X(), p1.Y()]); });
 
         var seg = board.create('segment', [p1, p2], {strokeColor: colors[idx % 3], strokeWidth: 3, lastarrow: {type: 2, size: 6}});
         
-        // The Arrow Label: 
-        // We set 'fixed: false' so it can be moved.
-        // We add the segment as an attractor to the text itself!
+        // Draggable Arrow Labels with high-strength attractors
         board.create('text', [
-            (currentArrows[idx][0][0] + currentArrows[idx][1][0]) / 2 + 0.5, 
-            (currentArrows[idx][0][1] + currentArrows[idx][1][1]) / 2, 
+            function() { return (p1.X() + p2.X()) / 2 + 0.5; }, 
+            function() { return (p1.Y() + p2.Y()) / 2; }, 
             arrLabels[idx]
         ], { 
             color: colors[idx % 3], 
             useMathJax: true, 
-            fontSize: 14, 
+            fontSize: 14,
             fixed: false,
             isDraggable: true,
-            attractors: [seg], 
-            attractorDistance: 0.5, 
-            snatchDistance: 0.8
+            attractors: [seg],
+            attractorDistance: 10,   // High magnetic range
+            snatchDistance: 1000    // Practically inescapable snap
         });
         
         arrows.push({p1: p1, p2: p2, seg: seg});
@@ -144,7 +143,7 @@ for (var j = 0; j < arrLabels.length; j++) {
 var updateInputs = function() {
     var lvls = levelPoints.map(function(obj) { return obj.p.Y(); });
     var arrs = arrows.map(function(obj) { return [[obj.p1.X(), obj.p1.Y()], [obj.p2.X(), obj.p2.Y()]]; });
-    var chems = chemTexts.map(function(t) { return [t.X(), t.Y()]; });
+    var chems = chemTexts.map(function(obj) { return [obj.cp.X(), obj.cp.Y()]; });
 
     document.getElementById(levelsRef).value = JSON.stringify(lvls);
     document.getElementById(arrowsRef).value = JSON.stringify(arrs);
@@ -160,9 +159,9 @@ levelPoints.forEach(function(obj) {
     obj.p.on('drag', updateInputs); 
     obj.p.on('up', updateInputs); 
 });
-chemTexts.forEach(function(t) {
-    t.on('drag', updateInputs);
-    t.on('up', updateInputs);
+chemTexts.forEach(function(obj) {
+    obj.cp.on('drag', updateInputs);
+    obj.cp.on('up', updateInputs);
 });
 arrows.forEach(function(obj) { 
     obj.p1.on('drag', updateInputs); obj.p1.on('up', updateInputs); 
