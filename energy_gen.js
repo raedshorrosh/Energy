@@ -1,4 +1,4 @@
-// Version: 1.8
+// Version: 1.12
 [[jsxgraph width="600px" height="500px" 
   input-ref-levelsRef='levelsRef' 
   input-ref-arrowsRef='arrowsRef' 
@@ -19,10 +19,10 @@ var len = Number("{#l_length#}") || 25;
 var chemOff = Number("{#chem_y_offset#}") || 0.6; 
 var rqm = "{#rqm#}";
 
-var isFixed = {#levels_fixed#};
-var startY = {#levels_y_init#};
-var labels = {#levels_txt#};
-var arrLabels = {#arrow_labels#};
+var isFixed = (typeof {#levels_fixed#} !== 'undefined') ? {#levels_fixed#} : [0, 0, 1];
+var startY = (typeof {#levels_y_init#} !== 'undefined') ? {#levels_y_init#} : [10, 2, -6]; 
+var labels = (typeof {#levels_txt#} !== 'undefined') ? {#levels_txt#} : ["\\( H_2O_{(g)} \\)", "\\( H_2O_{(l)} \\)", "\\( H_2O_{(s)} \\)"];
+var arrLabels = (typeof {#arrow_labels#} !== 'undefined') ? {#arrow_labels#} : ["\\( \\Delta H_m \\)", "\\( \\Delta H_b \\)", "\\( \\Delta H_s \\)"];
 var chemsFixed = (typeof {#chems_fixed#} !== 'undefined') ? {#chems_fixed#} : labels.map(function() { return 1; });
 
 var safeLoad = function(ref, def) {
@@ -60,7 +60,7 @@ for (var i = 0; i < labels.length; i++) {
     })(i);
 }
 
-// 3b. Chemical Labels (Moveable or Fixed) - Drag Text Directly
+// 3b. Chemical Labels (Direct Dragging)
 var chemTexts = [];
 var initChemPos = labels.map(function(l, idx) { 
     return [levelX + 2, currentLevelsY[idx] + chemOff]; 
@@ -70,25 +70,16 @@ var currentChems = safeLoad(chemLabelsRef, initChemPos);
 for (var c = 0; c < labels.length; c++) {
     (function(idx) {
         var isChemFixed = (chemsFixed[idx] == 1);
-        
-        // We create the text element. If not fixed, we enable dragging on the text itself.
         var txt = board.create('text', [currentChems[idx][0], currentChems[idx][1], labels[idx]], { 
-            useMathJax: true, 
-            fontSize: 14, 
-            fixed: isChemFixed,
-            isDraggable: !isChemFixed,
-            parse: false
+            useMathJax: true, fontSize: 14, fixed: isChemFixed, isDraggable: !isChemFixed, parse: false
         });
 
-        // Snap logic for the text if it's moveable
         if (!isChemFixed) {
             txt.on('drag', function() {
                 var currY = txt.Y();
                 var targetY = currY;
-                // Snap to levels accounting for the chem_y_offset
                 for (var l = 0; l < levelPoints.length; l++) {
                     var lineY = levelPoints[l].p.Y();
-                    // If the text (minus offset) is close to the line
                     if (Math.abs(currY - chemOff - lineY) < 0.7) {
                         targetY = lineY + chemOff; 
                     }
@@ -96,7 +87,6 @@ for (var c = 0; c < labels.length; c++) {
                 txt.moveTo([txt.X(), targetY]);
             });
         }
-        
         chemTexts.push(txt);
     })(c);
 }
@@ -122,17 +112,28 @@ for (var j = 0; j < arrLabels.length; j++) {
             attractors: levelSegments, attractorDistance: 0.5, snatchDistance: 1.0
         });
 
+        // Sync points vertically
         p1.on('drag', function() { p2.moveTo([p1.X(), p2.Y()]); });
         p2.on('drag', function() { p1.moveTo([p2.X(), p1.Y()]); });
 
         var seg = board.create('segment', [p1, p2], {strokeColor: colors[idx % 3], strokeWidth: 3, lastarrow: {type: 2, size: 6}});
         
+        // The Arrow Label: 
+        // We set 'fixed: false' so it can be moved.
+        // We add the segment as an attractor to the text itself!
         board.create('text', [
-            function() { return (p1.X() + p2.X()) / 2 + 0.5; }, 
-            function() { return (p1.Y() + p2.Y()) / 2; }, 
+            (currentArrows[idx][0][0] + currentArrows[idx][1][0]) / 2 + 0.5, 
+            (currentArrows[idx][0][1] + currentArrows[idx][1][1]) / 2, 
             arrLabels[idx]
         ], { 
-            color: colors[idx % 3], useMathJax: true, fontSize: 14 
+            color: colors[idx % 3], 
+            useMathJax: true, 
+            fontSize: 14, 
+            fixed: false,
+            isDraggable: true,
+            attractors: [seg], 
+            attractorDistance: 0.5, 
+            snatchDistance: 0.8
         });
         
         arrows.push({p1: p1, p2: p2, seg: seg});
