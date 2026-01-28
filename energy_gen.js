@@ -1,4 +1,4 @@
-// Version: 2.3
+// Version: 2.4
 [[jsxgraph width="600px" height="500px" 
   input-ref-levelsRef='levelsRef' 
   input-ref-arrowsRef='arrowsRef' 
@@ -60,7 +60,7 @@ for (var i = 0; i < labels.length; i++) {
     })(i);
 }
 
-// 3b. Chemical Labels (Moveable or Fixed) - Drag Text Directly
+// 3b. Chemical Labels (Moveable or Fixed)
 var chemTexts = [];
 var initChemPos = labels.map(function(l, idx) { 
     return [levelX + 2, currentLevelsY[idx] + chemOff]; 
@@ -123,12 +123,12 @@ for (var j = 0; j < arrLabels.length; j++) {
 
         var seg = board.create('segment', [p1, p2], {strokeColor: colors[idx % 3], strokeWidth: 3, lastarrow: {type: 2, size: 6}});
         
-        // Version 2.3: Improved label gliding with explicit drag properties
-        board.create('text', [
-            function() { return (p1.X() + p2.X()) / 2 + 0.5; }, 
-            function() { return (p1.Y() + p2.Y()) / 2; }, 
-            arrLabels[idx]
-        ], { 
+        // Version 2.4 Fix: Use static coordinates and high snatchDistance to allow gliding.
+        // Dynamic function wrappers prevent dragging along attractors in JSXGraph.
+        var midX = (p1.X() + p2.X()) / 2 + 0.5;
+        var midY = (p1.Y() + p2.Y()) / 2;
+
+        var label = board.create('text', [midX, midY, arrLabels[idx]], { 
             attractors: [seg], 
             attractorDistance: 10, 
             snatchDistance: 1000,
@@ -136,11 +136,11 @@ for (var j = 0; j < arrLabels.length; j++) {
             color: colors[idx % 3], 
             useMathJax: true, 
             fontSize: 14,
-            fixed: false, // Must be false for gliding
-            isDraggable: true // Enables independent movement along the attractor
+            fixed: false,
+            isDraggable: true
         });
         
-        arrows.push({p1: p1, p2: p2, seg: seg});
+        arrows.push({p1: p1, p2: p2, seg: seg, label: label});
     })(j);
 }
 
@@ -171,6 +171,8 @@ chemTexts.forEach(function(t) {
 arrows.forEach(function(obj) { 
     obj.p1.on('drag', updateInputs); obj.p1.on('up', updateInputs); 
     obj.p2.on('drag', updateInputs); obj.p2.on('up', updateInputs); 
+    // Sync when label is glided
+    obj.label.on('drag', updateInputs);
 });
 
 board.update();
