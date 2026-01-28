@@ -1,4 +1,4 @@
-// Version: 1.14 (High-strength attractors for arrow labels)
+// Version: 1.8
 [[jsxgraph width="600px" height="500px" 
   input-ref-levelsRef='levelsRef' 
   input-ref-arrowsRef='arrowsRef' 
@@ -49,6 +49,7 @@ for (var i = 0; i < labels.length; i++) {
             name: '', fixed: isFixed[idx] == 1, size: 4, color: 'blue', strokeColor: 'black', showInfobox: false
         });
         
+        // Horizontal lock via point listener
         p.on('drag', function() { p.moveTo([levelX, p.Y()]); });
 
         var seg = board.create('segment', [p, [function(){ return p.X() + len; }, function(){ return p.Y(); }]], { 
@@ -96,9 +97,10 @@ for (var c = 0; c < labels.length; c++) {
 // 4. Arrows
 var arrows = [];
 var colors = ['#3498db', '#e74c3c', '#2ecc71'];
+var arrowX = xp - 12;
 var defaultArrows = [];
 for (var k = 0; k < arrLabels.length; k++) {
-    defaultArrows.push([[xp - 12, 5 - (k * 4)], [xp - 12, 2 - (k * 4)]]);
+    defaultArrows.push([[arrowX, 5 - (k * 4)], [arrowX, 2 - (k * 4)]]);
 }
 var currentArrows = safeLoad(arrowsRef, defaultArrows);
 
@@ -114,12 +116,18 @@ for (var j = 0; j < arrLabels.length; j++) {
             attractors: levelSegments, attractorDistance: 0.5, snatchDistance: 1.0
         });
 
-        p1.on('drag', function() { p2.moveTo([p1.X(), p2.Y()]); });
-        p2.on('drag', function() { p1.moveTo([p2.X(), p1.Y()]); });
+        // Sync points and lock X via point listeners
+        p1.on('drag', function() { 
+            p1.moveTo([arrowX, p1.Y()]);
+            p2.moveTo([arrowX, p2.Y()]); 
+        });
+        p2.on('drag', function() { 
+            p1.moveTo([arrowX, p1.Y()]);
+            p2.moveTo([arrowX, p2.Y()]); 
+        });
 
         var seg = board.create('segment', [p1, p2], {strokeColor: colors[idx % 3], strokeWidth: 3, lastarrow: {type: 2, size: 6}});
         
-        // Draggable Arrow Labels with high-strength attractors
         board.create('text', [
             function() { return (p1.X() + p2.X()) / 2 + 0.5; }, 
             function() { return (p1.Y() + p2.Y()) / 2; }, 
@@ -128,11 +136,7 @@ for (var j = 0; j < arrLabels.length; j++) {
             color: colors[idx % 3], 
             useMathJax: true, 
             fontSize: 14,
-            fixed: false,
-            isDraggable: true,
-            attractors: [seg],
-            attractorDistance: 10,   // High magnetic range
-            snatchDistance: 1000    // Practically inescapable snap
+            fixed: true
         });
         
         arrows.push({p1: p1, p2: p2, seg: seg});
