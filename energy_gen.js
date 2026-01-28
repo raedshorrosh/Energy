@@ -1,4 +1,4 @@
-// Version: 2.2
+// Version: 2.3
 [[jsxgraph width="600px" height="500px" 
   input-ref-levelsRef='levelsRef' 
   input-ref-arrowsRef='arrowsRef' 
@@ -19,10 +19,10 @@ var len = Number("{#l_length#}") || 25;
 var chemOff = Number("{#chem_y_offset#}") || 0.6; 
 var rqm = "{#rqm#}";
 
-var isFixed = {#levels_fixed#};
-var startY = {#levels_y_init#};
-var labels = {#levels_txt#};
-var arrLabels = {#arrow_labels#};
+var isFixed = (typeof {#levels_fixed#} !== 'undefined') ? {#levels_fixed#} : [0, 0, 1];
+var startY = (typeof {#levels_y_init#} !== 'undefined') ? {#levels_y_init#} : [10, 2, -6]; 
+var labels = (typeof {#levels_txt#} !== 'undefined') ? {#levels_txt#} : ["\\( H_2O_{(g)} \\)", "\\( H_2O_{(l)} \\)", "\\( H_2O_{(s)} \\)"];
+var arrLabels = (typeof {#arrow_labels#} !== 'undefined') ? {#arrow_labels#} : ["\\( \\Delta H_m \\)", "\\( \\Delta H_b \\)", "\\( \\Delta H_s \\)"];
 var chemsFixed = (typeof {#chems_fixed#} !== 'undefined') ? {#chems_fixed#} : labels.map(function() { return 1; });
 
 var safeLoad = function(ref, def) {
@@ -71,7 +71,6 @@ for (var c = 0; c < labels.length; c++) {
     (function(idx) {
         var isChemFixed = (chemsFixed[idx] == 1);
         
-        // We create the text element. If not fixed, we enable dragging on the text itself.
         var txt = board.create('text', [currentChems[idx][0], currentChems[idx][1], labels[idx]], { 
             useMathJax: true, 
             fontSize: 14, 
@@ -80,15 +79,12 @@ for (var c = 0; c < labels.length; c++) {
             parse: false
         });
 
-        // Snap logic for the text if it's moveable
         if (!isChemFixed) {
             txt.on('drag', function() {
                 var currY = txt.Y();
                 var targetY = currY;
-                // Snap to levels accounting for the chem_y_offset
                 for (var l = 0; l < levelPoints.length; l++) {
                     var lineY = levelPoints[l].p.Y();
-                    // If the text (minus offset) is close to the line
                     if (Math.abs(currY - chemOff - lineY) < 0.7) {
                         targetY = lineY + chemOff; 
                     }
@@ -127,13 +123,21 @@ for (var j = 0; j < arrLabels.length; j++) {
 
         var seg = board.create('segment', [p1, p2], {strokeColor: colors[idx % 3], strokeWidth: 3, lastarrow: {type: 2, size: 6}});
         
+        // Version 2.3: Improved label gliding with explicit drag properties
         board.create('text', [
             function() { return (p1.X() + p2.X()) / 2 + 0.5; }, 
             function() { return (p1.Y() + p2.Y()) / 2; }, 
             arrLabels[idx]
         ], { 
-            attractors: [seg], attractorDistance: 10, snatchDistance: 100,showInfobox:false,
-            color: colors[idx % 3], useMathJax: true, fontSize: 14 
+            attractors: [seg], 
+            attractorDistance: 10, 
+            snatchDistance: 1000,
+            showInfobox: false,
+            color: colors[idx % 3], 
+            useMathJax: true, 
+            fontSize: 14,
+            fixed: false, // Must be false for gliding
+            isDraggable: true // Enables independent movement along the attractor
         });
         
         arrows.push({p1: p1, p2: p2, seg: seg});
