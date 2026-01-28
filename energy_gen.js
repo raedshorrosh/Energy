@@ -1,4 +1,4 @@
-// Version: 1.4
+// Version: 1.5
 [[jsxgraph width="600px" height="500px" 
   input-ref-levelsRef='levelsRef' 
   input-ref-arrowsRef='arrowsRef' 
@@ -16,6 +16,7 @@ var board = JXG.JSXGraph.initBoard(divid, {
 // 1. Config from Maxima
 var xp = Number("{#Axis_p#}") || -5;
 var len = Number("{#l_length#}") || 25;
+var chemOff = Number("{#chem_y_offset#}") || 0.6; // Read offset from Maxima
 var rqm = "{#rqm#}";
 
 var isFixed = {#levels_fixed#};
@@ -47,18 +48,17 @@ for (var i = 0; i < labels.length; i++) {
             name: '', fixed: isFixed[idx] == 1, size: 4, color: 'blue', strokeColor: 'black', showInfobox: false
         });
         
-        p.on('drag', function() {
-            p.moveTo([levelX, p.Y()]);
-        });
+        // Snap to X-axis
+        p.on('drag', function() { p.moveTo([levelX, p.Y()]); });
 
         var seg = board.create('segment', [p, [function(){ return p.X() + len; }, function(){ return p.Y(); }]], { 
             strokeColor: 'black', strokeWidth: 3 
         });
         
-        // Chemical Labels: Fixed position relative to level line
+        // Chemical Labels: Dynamically follow the point p
         board.create('text', [
             function(){ return p.X() + 2; }, 
-            function(){ return p.Y() + 0.6; }, 
+            function(){ return p.Y() + chemOff; }, 
             labels[idx]
         ], { 
             useMathJax: true, 
@@ -66,7 +66,7 @@ for (var i = 0; i < labels.length; i++) {
             fixed: true 
         });
         
-        levelPoints.push({p: p, seg: seg, x: levelX});
+        levelPoints.push({p: p, seg: seg});
         levelSegments.push(seg);
     })(i);
 }
@@ -84,56 +84,45 @@ for (var j = 0; j < arrLabels.length; j++) {
     (function(idx) {
         var p1 = board.create('point', currentArrows[idx][0], {
             name: '', color: colors[idx % 3], size: 4, face: '[]', showInfobox: false,
-            attractors: levelSegments,
-            attractorDistance: 0.5,
-            snatchDistance: 1.0
+            attractors: levelSegments, attractorDistance: 0.5, snatchDistance: 1.0
         });
         
         var p2 = board.create('point', currentArrows[idx][1], {
             name: '', color: colors[idx % 3], size: 2, face: 'o', showInfobox: false,
-            attractors: levelSegments,
-            attractorDistance: 0.5,
-            snatchDistance: 1.0
+            attractors: levelSegments, attractorDistance: 0.5, snatchDistance: 1.0
         });
 
-        // Sync X-axis movement
+        // Sync X-axis for arrows
         p1.on('drag', function() { p2.moveTo([p1.X(), p2.Y()]); });
         p2.on('drag', function() { p1.moveTo([p2.X(), p1.Y()]); });
 
         var seg = board.create('segment', [p1, p2], {strokeColor: colors[idx % 3], strokeWidth: 3, lastarrow: {type: 2, size: 6}});
         
-        // Arrow Labels: Draggable along the arrow line
-        // Using static numbers for coords so they aren't 'bound' to the midpoint formula
-        var initialX = (currentArrows[idx][0][0] + currentArrows[idx][1][0]) / 2 + 0.5;
-        var initialY = (currentArrows[idx][0][1] + currentArrows[idx][1][1]) / 2;
-
-        board.create('text', [initialX, initialY, arrLabels[idx]], { 
-            color: colors[idx % 3], 
-            useMathJax: true, 
-            fontSize: 14,
-            fixed: false, // Essential for moveability
-            attractors: [seg],
-            attractorDistance: 10,
-            snatchDistance: 1000
+        board.create('text', [
+            function() { return (p1.X() + p2.X()) / 2 + 0.5; }, 
+            function() { return (p1.Y() + p2.Y()) / 2; }, 
+            arrLabels[idx]
+        ], { 
+            color: colors[idx % 3], useMathJax: true, fontSize: 14 
         });
         
         arrows.push({p1: p1, p2: p2, seg: seg});
     })(j);
 }
 
-// 5. Visual Feedback Logic
+// 5. Visual Feedback
 var feedbackEl = document.getElementById(rqm);
-if (feedbackEl) {
+if (feedbackEl && feedbackEl.innerHTML.length > 5) {
     try {
         var results = JSON.parse(feedbackEl.innerHTML);
         if (results.levels) {
             results.levels.forEach(function(res, m) {
-                if (levelPoints[m]) { levelPoints[m].seg.setAttribute({strokeColor: res == 1 ? 'green' : 'red', strokeWidth: 4}); }
+                if (levelPoints[m]) levelPoints[m].seg.setAttribute({strokeColor: res == 1 ? 'green' : 'red', strokeWidth: 4});
             });
         }
         if (results.arrows) {
             results.arrows.forEach(function(res, n) {
-                if (arrows[n]) { arrows[n].seg.setAttribute({strokeColor: res == 1 ? 'green' : 'red', strokeWidth: 4}); }
+                if (arrows[n]) arrows[n].seg.setAttribute({strokeColor: res == 1 ? 'green' : 'red', strokeWidth: 4});
             });
         }
     } catch(e) {}
@@ -141,29 +130,24 @@ if (feedbackEl) {
 
 // 6. Data Sync
 var updateInputs = function() {
-    document.getElementById(levelsRef).value = JSON.stringify(levelPoints.map(function(obj) { return obj.p.Y(); }));
-    document.getElementById(arrowsRef).value = JSON.stringify(arrows.map(function(obj) { return [[obj.p1.X(), obj.p1.Y()], [obj.p2.X(), obj.p2.Y()]]; }));
-    
-    // Save chemical labels based on current level positions
-    document.getElementById(chemLabelsRef).value = JSON.stringify(levelPoints.map(function(obj) { 
-        return [obj.p.X() + 2, obj.p.Y() + 0.6]; 
-    }));
+    var lvls = levelPoints.map(function(obj) { return obj.p.Y(); });
+    var arrs = arrows.map(function(obj) { return [[obj.p1.X(), obj.p1.Y()], [obj.p2.X(), obj.p2.Y()]]; });
+    var chems = levelPoints.map(function(obj) { return [obj.p.X() + 2, obj.p.Y() + chemOff]; });
+
+    document.getElementById(levelsRef).value = JSON.stringify(lvls);
+    document.getElementById(arrowsRef).value = JSON.stringify(arrs);
+    document.getElementById(chemLabelsRef).value = JSON.stringify(chems);
     
     [levelsRef, arrowsRef, chemLabelsRef].forEach(function(id) {
         var el = document.getElementById(id);
-        if (el) { el.dispatchEvent(new Event('change')); }
+        if (el) el.dispatchEvent(new Event('change'));
     });
 };
 
-levelPoints.forEach(function(obj) { 
-    obj.p.on('drag', updateInputs); 
-    obj.p.on('up', updateInputs); 
-});
+levelPoints.forEach(function(obj) { obj.p.on('drag', updateInputs); obj.p.on('up', updateInputs); });
 arrows.forEach(function(obj) { 
-    obj.p1.on('drag', updateInputs); 
-    obj.p1.on('up', updateInputs); 
-    obj.p2.on('drag', updateInputs); 
-    obj.p2.on('up', updateInputs); 
+    obj.p1.on('drag', updateInputs); obj.p1.on('up', updateInputs); 
+    obj.p2.on('drag', updateInputs); obj.p2.on('up', updateInputs); 
 });
 
 board.update();
