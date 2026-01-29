@@ -1,4 +1,4 @@
-// Version: 3.6
+// Version: 3.7
 [[jsxgraph width="600px" height="500px" 
   input-ref-levelsRef='levelsRef' 
   input-ref-arrowsRef='arrowsRef' 
@@ -71,7 +71,7 @@ for (var i = 0; i < labels.length; i++) {
         });
         
         board.create('text', [function(){ return p.X() + 2; }, function(){ return p.Y() + chemOff; }, function(){ return nameRef.txts[idx]; }], {
-            useMathJax: true, fontSize: 14, fixed: true, anchorY: 'bottom'
+            useMathJax: true, fontSize: 14, fixed: true
         });
 
         levelPoints.push({p: p, seg: seg, moveable: (isFixed[idx] == 0)});
@@ -172,12 +172,13 @@ var applyGrading = function(grade) {
     if (grade.arrows) {
         grade.arrows.forEach(function(mrk, i) {
             var mark = (mrk == 1) ? correctMark : incorrectMark;
-            if (nameRef.p[i*2] !== undefined) nameRef.p[i*2] = mark;
+            if (nameRef.p[idx*2] !== undefined) nameRef.p[idx*2] = mark;
             if (arrows[i]) {
                 arrows[i].seg.setAttribute({ strokeColor: (mrk == 1 ? 'green' : 'red'), strokeWidth: 5 });
             }
         });
     }
+    board.fullUpdate();
 };
 
 // 8. Sync with STACK Content (Reverting to your specific implementation)
