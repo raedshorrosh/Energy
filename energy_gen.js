@@ -1,4 +1,4 @@
-// Version: 2.4
+// Version: 2.6
 [[jsxgraph width="600px" height="500px" 
   input-ref-levelsRef='levelsRef' 
   input-ref-arrowsRef='arrowsRef' 
@@ -60,7 +60,7 @@ for (var i = 0; i < labels.length; i++) {
     })(i);
 }
 
-// 3b. Chemical Labels (Moveable or Fixed)
+// 3b. Chemical Labels
 var chemTexts = [];
 var initChemPos = labels.map(function(l, idx) { 
     return [levelX + 2, currentLevelsY[idx] + chemOff]; 
@@ -70,7 +70,6 @@ var currentChems = safeLoad(chemLabelsRef, initChemPos);
 for (var c = 0; c < labels.length; c++) {
     (function(idx) {
         var isChemFixed = (chemsFixed[idx] == 1);
-        
         var txt = board.create('text', [currentChems[idx][0], currentChems[idx][1], labels[idx]], { 
             useMathJax: true, 
             fontSize: 14, 
@@ -92,7 +91,6 @@ for (var c = 0; c < labels.length; c++) {
                 txt.moveTo([txt.X(), targetY]);
             });
         }
-        
         chemTexts.push(txt);
     })(c);
 }
@@ -123,24 +121,16 @@ for (var j = 0; j < arrLabels.length; j++) {
 
         var seg = board.create('segment', [p1, p2], {strokeColor: colors[idx % 3], strokeWidth: 3, lastarrow: {type: 2, size: 6}});
         
-        // Version 2.4 Fix: Use static coordinates and high snatchDistance to allow gliding.
-        // Dynamic function wrappers prevent dragging along attractors in JSXGraph.
         var midX = (p1.X() + p2.X()) / 2 + 0.5;
         var midY = (p1.Y() + p2.Y()) / 2;
 
         var label = board.create('text', [midX, midY, arrLabels[idx]], { 
-            attractors: [seg], 
-            attractorDistance: 10, 
-            snatchDistance: 1000,
-            showInfobox: false,
-            color: colors[idx % 3], 
-            useMathJax: true, 
-            fontSize: 14,
-            fixed: false,
-            isDraggable: true
+            attractors: [seg], attractorDistance: 10, snatchDistance: 1000,
+            showInfobox: false, color: colors[idx % 3], useMathJax: true, fontSize: 14,
+            fixed: false, isDraggable: true
         });
         
-        arrows.push({p1: p1, p2: p2, seg: seg, label: label});
+        arrows.push({p1: p1, p2: p2, label: label});
     })(j);
 }
 
@@ -160,20 +150,68 @@ var updateInputs = function() {
     });
 };
 
-levelPoints.forEach(function(obj) { 
-    obj.p.on('drag', updateInputs); 
-    obj.p.on('up', updateInputs); 
-});
-chemTexts.forEach(function(t) {
-    t.on('drag', updateInputs);
-    t.on('up', updateInputs);
-});
+// 6. Interaction Listeners
+levelPoints.forEach(function(obj) { obj.p.on('drag', updateInputs); obj.p.on('up', updateInputs); });
+chemTexts.forEach(function(t) { t.on('drag', updateInputs); t.on('up', updateInputs); });
 arrows.forEach(function(obj) { 
     obj.p1.on('drag', updateInputs); obj.p1.on('up', updateInputs); 
     obj.p2.on('drag', updateInputs); obj.p2.on('up', updateInputs); 
-    // Sync when label is glided
     obj.label.on('drag', updateInputs);
 });
+
+// 7. STACK Feedback & Grading Logic
+if (typeof stack_js !== 'undefined') {
+    stack_js.get_content(rqm).then((content) => {
+        if (content !== null) {
+            try {
+                var scores = JSON.parse(content);
+                
+                // A. Freeze Board
+                board.objectsList.forEach(function(el) {
+                    el.setAttribute({fixed: true, isDraggable: false});
+                });
+
+                // B. Mark Chemicals (Only if they were NOT fixed)
+                if (scores.chems) {
+                    scores.chems.forEach(function(score, idx) {
+                        if (chemsFixed[idx] == 0) {
+                            var mark = (score === 1) ? '✅' : '❌';
+                            board.create('text', [function(){ return chemTexts[idx].X() + 1.5; }, function(){ return chemTexts[idx].Y(); }, mark], {
+                                fixed: true, fontSize: 20, color: (score === 1) ? 'green' : 'red'
+                            });
+                        }
+                    });
+                }
+
+                // C. Mark Arrows (Arrows are always graded as they are always movable)
+                if (scores.arrows) {
+                    scores.arrows.forEach(function(score, idx) {
+                        var mark = (score === 1) ? '✅' : '❌';
+                        board.create('text', [function(){ return arrows[idx].label.X() + 1.5; }, function(){ return arrows[idx].label.Y(); }, mark], {
+                            fixed: true, fontSize: 20, color: (score === 1) ? 'green' : 'red'
+                        });
+                    });
+                }
+                
+                // D. Mark Levels (Only if they were NOT fixed)
+                if (scores.levels) {
+                    scores.levels.forEach(function(score, idx) {
+                        if (isFixed[idx] == 0) {
+                            var mark = (score === 1) ? '✅' : '❌';
+                            board.create('text', [xp + len + 1.5, function(){ return levelPoints[idx].p.Y(); }, mark], {
+                                fixed: true, fontSize: 20, color: (score === 1) ? 'green' : 'red'
+                            });
+                        }
+                    });
+                }
+
+                board.update();
+            } catch (e) {
+                console.error("Grading parse error", e);
+            }
+        }
+    });
+}
 
 board.update();
 [[/jsxgraph]]
