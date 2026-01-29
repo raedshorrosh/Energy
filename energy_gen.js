@@ -1,4 +1,4 @@
-// Version: 2.6
+// Version: 2.7
 [[jsxgraph width="600px" height="500px" 
   input-ref-levelsRef='levelsRef' 
   input-ref-arrowsRef='arrowsRef' 
@@ -162,7 +162,8 @@ arrows.forEach(function(obj) {
 // 7. STACK Feedback & Grading Logic
 if (typeof stack_js !== 'undefined') {
     stack_js.get_content(rqm).then((content) => {
-        if (content !== null) {
+        // Validation: Ensure content is a string and looks like a JSON object
+        if (content && typeof content === 'string' && content.trim().startsWith('{')) {
             try {
                 var scores = JSON.parse(content);
                 
@@ -183,7 +184,7 @@ if (typeof stack_js !== 'undefined') {
                     });
                 }
 
-                // C. Mark Arrows (Arrows are always graded as they are always movable)
+                // C. Mark Arrows (Arrows are always graded)
                 if (scores.arrows) {
                     scores.arrows.forEach(function(score, idx) {
                         var mark = (score === 1) ? '✅' : '❌';
@@ -207,7 +208,7 @@ if (typeof stack_js !== 'undefined') {
 
                 board.update();
             } catch (e) {
-                console.error("Grading parse error", e);
+                console.error("Grading JSON parsing failed:", e);
             }
         }
     });
