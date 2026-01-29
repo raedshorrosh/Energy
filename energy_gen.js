@@ -1,4 +1,4 @@
-// Version: 2.8
+// Version: 3.0
 [[jsxgraph width="600px" height="500px" 
   input-ref-levelsRef='levelsRef' 
   input-ref-arrowsRef='arrowsRef' 
@@ -163,19 +163,34 @@ arrows.forEach(function(obj) {
 });
 
 // 7. STACK Feedback & Grading Logic
-var checkAnswer = function(scores) {
-    // Freeze board
+var freezeBoard = function() {
     board.objectsList.forEach(function(el) {
-        el.setAttribute({fixed: true, isDraggable: false});
+        el.setAttribute({
+            fixed: true, 
+            isDraggable: false, 
+            moveAlongX: false, 
+            moveAlongY: false
+        });
+        // Specifically for points
+        if (el.elementClass === 'point') {
+            el.fixed = true;
+        }
     });
+    board.update();
+};
 
-    // Mark Levels (only if not fixed)
+var applyGrading = function(scores) {
+    if (!scores) return;
+    
+    freezeBoard();
+
+    // Mark Levels
     if (scores.levels) {
         scores.levels.forEach(function(mrk, idx) {
             if (isFixed[idx] == 0) {
                 var mark = (mrk == 1) ? correctMark : incorrectMark;
-                board.create('text', [xp + len + 1, levelPoints[idx].p.Y(), mark], {
-                    fixed: true, fontSize: 20, color: (mrk == 1) ? 'green' : 'red'
+                board.create('text', [xp + len + 1.5, levelPoints[idx].p.Y(), mark], {
+                    fixed: true, fontSize: 24, color: (mrk == 1) ? 'green' : 'red'
                 });
             }
         });
@@ -185,19 +200,19 @@ var checkAnswer = function(scores) {
     if (scores.arrows) {
         scores.arrows.forEach(function(mrk, idx) {
             var mark = (mrk == 1) ? correctMark : incorrectMark;
-            board.create('text', [function(){ return arrows[idx].label.X() + 1.5; }, function(){ return arrows[idx].label.Y(); }, mark], {
-                fixed: true, fontSize: 20, color: (mrk == 1) ? 'green' : 'red'
+            board.create('text', [function(){ return arrows[idx].label.X() + 2; }, function(){ return arrows[idx].label.Y(); }, mark], {
+                fixed: true, fontSize: 24, color: (mrk == 1) ? 'green' : 'red'
             });
         });
     }
 
-    // Mark Chemicals (only if not fixed)
+    // Mark Chemicals
     if (scores.chems) {
         scores.chems.forEach(function(mrk, idx) {
             if (chemsFixed[idx] == 0) {
                 var mark = (mrk == 1) ? correctMark : incorrectMark;
-                board.create('text', [function(){ return chemTexts[idx].X() + 1.5; }, function(){ return chemTexts[idx].Y(); }, mark], {
-                    fixed: true, fontSize: 20, color: (mrk == 1) ? 'green' : 'red'
+                board.create('text', [function(){ return chemTexts[idx].X() + 2.5; }, function(){ return chemTexts[idx].Y(); }, mark], {
+                    fixed: true, fontSize: 24, color: (mrk == 1) ? 'green' : 'red'
                 });
             }
         });
@@ -205,17 +220,25 @@ var checkAnswer = function(scores) {
     board.update();
 };
 
+// Improved STACK integration
 if (typeof stack_js !== 'undefined') {
     stack_js.get_content(rqm).then((content) => {
-        if (content && typeof content === 'string' && content.trim().startsWith('{')) {
+        // Validation: If STACK returns null or string "grading_scores", it's not ready
+        if (content && content !== "grading_scores" && typeof content === 'string') {
             try {
-                let scores = JSON.parse(content);
-                checkAnswer(scores);
-            } catch (e) {
-                console.error("Grading JSON parsing failed:", e);
-            }
+                // Ensure it's valid JSON
+                if (content.trim().startsWith('{')) {
+                    applyGrading(JSON.parse(content));
+                }
+            } catch (e) { console.error("Grading Parse Error:", e); }
         }
     });
+} else {
+    // Direct DOM fallback if stack_js isn't available in context
+    var fb = document.getElementById(rqm);
+    if (fb && fb.innerHTML.trim().startsWith('{')) {
+        try { applyGrading(JSON.parse(fb.innerHTML)); } catch(e) {}
+    }
 }
 
 board.update();
