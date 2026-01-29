@@ -1,4 +1,4 @@
-// Version: 2.7
+// Version: 2.8
 [[jsxgraph width="600px" height="500px" 
   input-ref-levelsRef='levelsRef' 
   input-ref-arrowsRef='arrowsRef' 
@@ -24,6 +24,9 @@ var startY = (typeof {#levels_y_init#} !== 'undefined') ? {#levels_y_init#} : [1
 var labels = (typeof {#levels_txt#} !== 'undefined') ? {#levels_txt#} : ["\\( H_2O_{(g)} \\)", "\\( H_2O_{(l)} \\)", "\\( H_2O_{(s)} \\)"];
 var arrLabels = (typeof {#arrow_labels#} !== 'undefined') ? {#arrow_labels#} : ["\\( \\Delta H_m \\)", "\\( \\Delta H_b \\)", "\\( \\Delta H_s \\)"];
 var chemsFixed = (typeof {#chems_fixed#} !== 'undefined') ? {#chems_fixed#} : labels.map(function() { return 1; });
+
+var correctMark = '✅';
+var incorrectMark = '❌';
 
 var safeLoad = function(ref, def) {
     var el = document.getElementById(ref);
@@ -160,53 +163,54 @@ arrows.forEach(function(obj) {
 });
 
 // 7. STACK Feedback & Grading Logic
+var checkAnswer = function(scores) {
+    // Freeze board
+    board.objectsList.forEach(function(el) {
+        el.setAttribute({fixed: true, isDraggable: false});
+    });
+
+    // Mark Levels (only if not fixed)
+    if (scores.levels) {
+        scores.levels.forEach(function(mrk, idx) {
+            if (isFixed[idx] == 0) {
+                var mark = (mrk == 1) ? correctMark : incorrectMark;
+                board.create('text', [xp + len + 1, levelPoints[idx].p.Y(), mark], {
+                    fixed: true, fontSize: 20, color: (mrk == 1) ? 'green' : 'red'
+                });
+            }
+        });
+    }
+
+    // Mark Arrows
+    if (scores.arrows) {
+        scores.arrows.forEach(function(mrk, idx) {
+            var mark = (mrk == 1) ? correctMark : incorrectMark;
+            board.create('text', [function(){ return arrows[idx].label.X() + 1.5; }, function(){ return arrows[idx].label.Y(); }, mark], {
+                fixed: true, fontSize: 20, color: (mrk == 1) ? 'green' : 'red'
+            });
+        });
+    }
+
+    // Mark Chemicals (only if not fixed)
+    if (scores.chems) {
+        scores.chems.forEach(function(mrk, idx) {
+            if (chemsFixed[idx] == 0) {
+                var mark = (mrk == 1) ? correctMark : incorrectMark;
+                board.create('text', [function(){ return chemTexts[idx].X() + 1.5; }, function(){ return chemTexts[idx].Y(); }, mark], {
+                    fixed: true, fontSize: 20, color: (mrk == 1) ? 'green' : 'red'
+                });
+            }
+        });
+    }
+    board.update();
+};
+
 if (typeof stack_js !== 'undefined') {
     stack_js.get_content(rqm).then((content) => {
-        // Validation: Ensure content is a string and looks like a JSON object
         if (content && typeof content === 'string' && content.trim().startsWith('{')) {
             try {
-                var scores = JSON.parse(content);
-                
-                // A. Freeze Board
-                board.objectsList.forEach(function(el) {
-                    el.setAttribute({fixed: true, isDraggable: false});
-                });
-
-                // B. Mark Chemicals (Only if they were NOT fixed)
-                if (scores.chems) {
-                    scores.chems.forEach(function(score, idx) {
-                        if (chemsFixed[idx] == 0) {
-                            var mark = (score === 1) ? '✅' : '❌';
-                            board.create('text', [function(){ return chemTexts[idx].X() + 1.5; }, function(){ return chemTexts[idx].Y(); }, mark], {
-                                fixed: true, fontSize: 20, color: (score === 1) ? 'green' : 'red'
-                            });
-                        }
-                    });
-                }
-
-                // C. Mark Arrows (Arrows are always graded)
-                if (scores.arrows) {
-                    scores.arrows.forEach(function(score, idx) {
-                        var mark = (score === 1) ? '✅' : '❌';
-                        board.create('text', [function(){ return arrows[idx].label.X() + 1.5; }, function(){ return arrows[idx].label.Y(); }, mark], {
-                            fixed: true, fontSize: 20, color: (score === 1) ? 'green' : 'red'
-                        });
-                    });
-                }
-                
-                // D. Mark Levels (Only if they were NOT fixed)
-                if (scores.levels) {
-                    scores.levels.forEach(function(score, idx) {
-                        if (isFixed[idx] == 0) {
-                            var mark = (score === 1) ? '✅' : '❌';
-                            board.create('text', [xp + len + 1.5, function(){ return levelPoints[idx].p.Y(); }, mark], {
-                                fixed: true, fontSize: 20, color: (score === 1) ? 'green' : 'red'
-                            });
-                        }
-                    });
-                }
-
-                board.update();
+                let scores = JSON.parse(content);
+                checkAnswer(scores);
             } catch (e) {
                 console.error("Grading JSON parsing failed:", e);
             }
