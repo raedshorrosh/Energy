@@ -1,4 +1,4 @@
-// Version: 3.8
+// Version: 3.6
 [[jsxgraph width="600px" height="500px" 
   input-ref-levelsRef='levelsRef' 
   input-ref-arrowsRef='arrowsRef' 
@@ -29,12 +29,11 @@ var startY = (typeof {#levels_y_init#} !== 'undefined') ? {#levels_y_init#} : [1
 var labels = (typeof {#levels_txt#} !== 'undefined') ? {#levels_txt#} : ["\\( H_2O_{(g)} \\)", "\\( H_2O_{(l)} \\)", "\\( H_2O_{(s)} \\)"];
 var arrLabels = (typeof {#arrow_labels#} !== 'undefined') ? {#arrow_labels#} : ["\\( \\Delta H_m \\)", "\\( \\Delta H_b \\)", "\\( \\Delta H_s \\)"];
 
-// DYNAMIC nameRef structure
-// We initialize arrays based on the length of labels and arrow labels provided by Maxima
+// nameRef structure for marks
 var nameRef = {
-    txts: [...labels],
-    p: Array(arrLabels.length * 2).fill(""), // 2 points per arrow
-    l: Array(labels.length).fill(""),        // 1 mark per level point
+    txts: labels,
+    p: ["", "", "", "", "", ""], // Marks for arrows (points)
+    l: ["", "", ""],             // Marks for level points
     chkd: false
 };
 
@@ -62,7 +61,7 @@ for (var i = 0; i < labels.length; i++) {
     (function(idx) {
         var p = board.create('point', [levelX, currentLevelsY[idx]], {
             name: function() { return nameRef.l[idx]; }, 
-            fixed: function() { return (isFixed[idx] == 1 || nameRef.chkd); }, 
+            fixed: function() { return isFixed[idx] == 1 || nameRef.chkd; }, 
             size: 4, color: 'blue', strokeColor: 'black', showInfobox: false,
             moveAlongX: false
         });
@@ -72,7 +71,7 @@ for (var i = 0; i < labels.length; i++) {
         });
         
         board.create('text', [function(){ return p.X() + 2; }, function(){ return p.Y() + chemOff; }, function(){ return nameRef.txts[idx]; }], {
-            useMathJax: true, fontSize: 14, fixed: true
+            useMathJax: true, fontSize: 14, fixed: true, anchorY: 'bottom'
         });
 
         levelPoints.push({p: p, seg: seg, moveable: (isFixed[idx] == 0)});
@@ -81,10 +80,10 @@ for (var i = 0; i < labels.length; i++) {
 
 // 4. Arrows
 var arrows = [];
-var colors = ['#3498db', '#e74c3c', '#2ecc71', '#9b59b6', '#f1c40f']; // Expanded color palette
+var colors = ['#3498db', '#e74c3c', '#2ecc71'];
 var defaultArrows = [];
 for (var k = 0; k < arrLabels.length; k++) {
-    defaultArrows.push([[xp - 12, 5 - (k * 3)], [xp - 12, 2 - (k * 3)]]);
+    defaultArrows.push([[xp - 12, 5 - (k * 4)], [xp - 12, 2 - (k * 4)]]);
 }
 var currentArrows = safeLoad(arrowsRef, defaultArrows);
 
@@ -92,25 +91,25 @@ for (var j = 0; j < arrLabels.length; j++) {
     (function(idx) {
         var p1 = board.create('point', currentArrows[idx][0], {
             name: function() { return nameRef.p[idx*2] || ''; }, 
-            color: colors[idx % colors.length], size: 4, face: '[]', showInfobox: false,
+            color: colors[idx % 3], size: 4, face: '[]', showInfobox: false,
             moveAlongX: false,
             fixed: function() { return nameRef.chkd; }
         });
         
         var p2 = board.create('point', currentArrows[idx][1], {
             name: function() { return nameRef.p[idx*2+1] || ''; }, 
-            color: colors[idx % colors.length], size: 2, face: 'o', showInfobox: false,
+            color: colors[idx % 3], size: 2, face: 'o', showInfobox: false,
             moveAlongX: false,
             fixed: function() { return nameRef.chkd; }
         });
 
-        var seg = board.create('segment', [p1, p2], {strokeColor: colors[idx % colors.length], strokeWidth: 3, lastarrow: {type: 2, size: 6}});
+        var seg = board.create('segment', [p1, p2], {strokeColor: colors[idx % 3], strokeWidth: 3, lastarrow: {type: 2, size: 6}});
         
         board.create('text', [
             function() { return (p1.X() + p2.X()) / 2 + 0.5; },
             function() { return (p1.Y() + p2.Y()) / 2; },
             arrLabels[idx]
-        ], { color: colors[idx % colors.length], useMathJax: true, fontSize: 14, fixed: function() { return nameRef.chkd; } });
+        ], { color: colors[idx % 3], useMathJax: true, fontSize: 14, fixed: function() { return nameRef.chkd; } });
         
         arrows.push({p1: p1, p2: p2, seg: seg});
     })(j);
@@ -179,18 +178,15 @@ var applyGrading = function(grade) {
             }
         });
     }
-    board.fullUpdate();
 };
 
-// 8. Sync with STACK Content
+// 8. Sync with STACK Content (Reverting to your specific implementation)
 stack_js.get_content(rqm).then((content) => {
     if (content !== null) {
         if (!(nameRef.chkd)) {
             nameRef.chkd = true;
-            try {
-                let grade = JSON.parse(content);
-                applyGrading(grade);
-            } catch(e) { console.error("Grading parse error", e); }
+            let grade = JSON.parse(content);
+            applyGrading(grade);
             board.update();
         }
     }
