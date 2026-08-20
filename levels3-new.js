@@ -177,7 +177,7 @@ board.update();
       board.update(); }
   }
 };
-
+/*
 stack_js.get_content({#rqm#}).then((content) => {
 if (content !== null) {
 // As the content is not null this means the span is present so feedback is displayed and we can react to it here
@@ -188,5 +188,60 @@ for (let i = 0; i != 9; i++) {checkAnswer(i,grade[i])};
 console.log(grade);
 board.update();  
 }}});
+*/
+// =========================================================================
+// NEW PATTERN SCANNER to look for the array of answers
+// tiny editor is removing the id from <span id="{#rqm#}">{#answer#}</span> and will leave the array,
+// tiny doeas not remove class, so to use class i have to correct each question !
+// =========================================================================
 
+// Monitor the STACK inputs to see if Moodle locked them (quiz submitted)
+var checkInterval = setInterval(function() {
+    var inputEl = document.getElementById(stateRef7);
+    
+    if (inputEl && (inputEl.hasAttribute('readonly') || inputEl.readOnly || inputEl.disabled)) {
+        
+        var gradeArray = null;
+        var questionContainer = inputEl.closest('.que'); // Confines search to THIS question
+        
+        if (questionContainer) {
+            var allElements = questionContainer.querySelectorAll('*');
+            
+            for (var j = 0; j < allElements.length; j++) {
+                var text = allElements[j].innerText;
+                
+                // Look for the [1,0,1...] pattern
+                if (text && text.trim().startsWith('[') && text.trim().endsWith(']')) {
+                    try {
+                        var parsed = JSON.parse(text.trim());
+                        
+                        if (Array.isArray(parsed) && parsed.length === 9) {
+                            var isAllNumbers = parsed.every(val => typeof val === 'number');
+                            if (isAllNumbers) {
+                                gradeArray = parsed;
+                                
+                                // Hide the array so the student doesn't see it
+                                allElements[j].style.display = 'none'; 
+                                
+                                break; // Found it, stop searching
+                            }
+                        }
+                    } catch (err) {}
+                }
+            }
+        }
+
+        if (gradeArray !== null) {
+            clearInterval(checkInterval); // Stop checking
+            
+            if (!nameRef.chkd) {
+                nameRef.chkd = true;
+                for (let i = 0; i < 9; i++) {
+                    checkAnswer(i, gradeArray[i]);
+                }
+                board.update();
+            }
+        }
+    }
+}, 500);
 [[/jsxgraph]]</span>
