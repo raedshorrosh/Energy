@@ -205,19 +205,28 @@ try {
         if (inputEl) {
             var isLocked = inputEl.hasAttribute('readonly') || inputEl.readOnly || inputEl.disabled;
             
+            // Let's log this once when it detects it's locked
+            if (isLocked && !window._loggedLock) {
+                window._loggedLock = true;
+                console.log("Input is locked! Scanning question container...");
+            }
+            
             if (isLocked) {
                 var questionContainer = inputEl.closest('.que') || document.body;
                 var rawText = questionContainer.textContent;
-                var cleanText = rawText.replace(/[^0-9\[\],]/g, ''); 
                 
+                // Let's print the raw text of the question to the console once so we can inspect it
+                if (!window._loggedText) {
+                    window._loggedText = true;
+                    console.log("Full Question Text Found:", rawText);
+                }
+
+                var cleanText = rawText.replace(/[^0-9\[\],]/g, ''); 
                 var match = cleanText.match(/\[(?:\d+,){8}\d+\]/);
                 
                 if (match) {
                     try {
                         var gradeArray = JSON.parse(match[0]);
-                        
-                        // SAFETY CHECK: Ensure this is actually the grading array [0/1, 0/1, ...] 
-                        // and not accidental input reference numbers like [1,2,3,4,50...]
                         var isValidGradeArray = gradeArray.every(val => val === 0 || val === 1);
                         
                         if (isValidGradeArray) {
@@ -230,12 +239,9 @@ try {
                                     checkAnswer(i, gradeArray[i]);
                                 }
                                 board.update();
-                                console.log("Graph successfully updated with checkmarks/crosses!");
+                                console.log("Graph successfully updated!");
                             }
-                        } else {
-                            // It matched an array, but it was just input IDs. Keep searching.
                         }
-                        
                     } catch (err) {
                         console.error("Parse error:", err);
                     }
