@@ -190,68 +190,32 @@ board.update();
 }}});
 */
 // =========================================================================
-// NEW PATTERN SCANNER to look for the array of answers
 // tiny editor is removing the id from <span id="{#rqm#}">{#answer#}</span> and will leave the array,
 // tiny doeas not remove class, so to use class i have to correct each question !
 // =========================================================================
-// Monitor one of your main visible STACK inputs (ans1Ref) to see if Moodle locked it
-// Monitor the STACK input to see when it locks
-try {
-    console.log("JSXGraph grading script successfully loaded and started!");
-
-    var checkInterval = setInterval(function() {
-        var inputEl = document.getElementById(ans1Ref) || document.querySelector('input[id*="ans1"]');
-        
-        if (inputEl) {
-            var isLocked = inputEl.hasAttribute('readonly') || inputEl.readOnly || inputEl.disabled;
-            
-            // Let's log this once when it detects it's locked
-            if (isLocked && !window._loggedLock) {
-                window._loggedLock = true;
-                console.log("Input is locked! Scanning question container...");
-            }
-            
-            if (isLocked) {
-                var questionContainer = inputEl.closest('.que') || document.body;
-                var rawText = questionContainer.textContent;
-                
-                // Let's print the raw text of the question to the console once so we can inspect it
-                if (!window._loggedText) {
-                    window._loggedText = true;
-                    console.log("Full Question Text Found:", rawText);
-                }
-
-                var cleanText = rawText.replace(/[^0-9\[\],]/g, ''); 
-                var match = cleanText.match(/\[(?:\d+,){8}\d+\]/);
-                
-                if (match) {
-                    try {
-                        var gradeArray = JSON.parse(match[0]);
-                        var isValidGradeArray = gradeArray.every(val => val === 0 || val === 1);
-                        
-                        if (isValidGradeArray) {
-                            console.log("Found valid grade array!", gradeArray);
-                            clearInterval(checkInterval);
-                            
-                            if (!nameRef.chkd) {
-                                nameRef.chkd = true;
-                                for (let i = 0; i < 9; i++) {
-                                    checkAnswer(i, gradeArray[i]);
-                                }
-                                board.update();
-                                console.log("Graph successfully updated!");
-                            }
-                        }
-                    } catch (err) {
-                        console.error("Parse error:", err);
+// =========================================================================
+// STACK JS CONTENT LOADER WITH FALLBACK
+// =========================================================================
+setTimeout(function() {
+    if (typeof rqm !== 'undefined' && typeof stack_js !== 'undefined') {
+        stack_js.get_content(rqm).then((content) => {
+            if (content !== null && !nameRef.chkd) {
+                nameRef.chkd = true;
+                try {
+                    let grade = JSON.parse(content);
+                    for (let i = 0; i < grade.length; i++) {
+                        checkAnswer(i, grade[i]);
                     }
+                    board.update();
+                    console.log("Graded successfully via stack_js:", grade);
+                } catch (err) {
+                    console.error("Error parsing content:", err);
                 }
             }
-        }
-    }, 500);
-
-} catch (e) {
-    console.error("FATAL ERROR in grading script setup:", e);
-}
+        }).catch(function(err) {
+            console.log("stack_js lookup waiting or skipped.");
+        });
+    }
+}, 1000);
 
 [[/jsxgraph]]</span>
