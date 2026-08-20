@@ -195,57 +195,61 @@ board.update();
 // tiny doeas not remove class, so to use class i have to correct each question !
 // =========================================================================
 // Monitor one of your main visible STACK inputs (ans1Ref) to see if Moodle locked it
+// Monitor the STACK input to see when it locks
 var checkInterval = setInterval(function() {
     var inputEl = document.getElementById(ans1Ref);
     
-    // Check if the input is locked (quiz submitted)
-    if (inputEl && (inputEl.hasAttribute('readonly') || inputEl.readOnly || inputEl.disabled)) {
+    if (inputEl) {
+        // DEBUG 1: Is it finding the input, and is it readonly/disabled?
+        // (Uncomment the line below if you want to flood your console to test the read-only state)
+        // console.log("Input found. Readonly:", inputEl.hasAttribute('readonly') || inputEl.readOnly || inputEl.disabled);
         
-        var questionContainer = inputEl.closest('.que');
-        
-        if (questionContainer) {
-            // Get all text inside the question, and STRIP OUT all spaces, letters, 
-            // and invisible RTL/LTR characters. Only keep brackets, commas, and numbers.
-            var rawText = questionContainer.textContent;
-            var cleanText = rawText.replace(/[^0-9\[\],]/g, ''); 
+        if (inputEl.hasAttribute('readonly') || inputEl.readOnly || inputEl.disabled) {
             
-            // Now look for exactly 9 numbers inside brackets: e.g. [1,0,1,0,0,0,1,1,0]
-            var match = cleanText.match(/\[(?:\d+,){8}\d+\]/);
+            var questionContainer = inputEl.closest('.que');
             
-            if (match) {
-                try {
-                    // We found the pure array! Parse it.
-                    var gradeArray = JSON.parse(match[0]);
-                    
-                    clearInterval(checkInterval); // Stop checking
-                    
-                    if (!nameRef.chkd) {
-                        nameRef.chkd = true;
+            // DEBUG 2: Let's see what questionContainer captured!
+            console.log("questionContainer found (.que):", questionContainer);
+            
+            if (questionContainer) {
+                // DEBUG 3: Let's see all text content inside this specific question block
+                console.log("Question text content:", questionContainer.textContent);
+                
+                var rawText = questionContainer.textContent;
+                var cleanText = rawText.replace(/[^0-9\[\],]/g, ''); 
+                
+                console.log("Cleaned text for matching:", cleanText);
+                
+                var match = cleanText.match(/\[(?:\d+,){8}\d+\]/);
+                console.log("Regex match result:", match);
+                
+                if (match) {
+                    try {
+                        var gradeArray = JSON.parse(match[0]);
+                        console.log("Parsed grade array successfully:", gradeArray);
                         
-                        // Fire the checkmarks
-                        for (let i = 0; i < 9; i++) {
-                            checkAnswer(i, gradeArray[i]);
-                        }
-                        board.update();
+                        clearInterval(checkInterval);
                         
-                        // Now, hunt down the specific HTML element holding the text and hide it
-                        var allElements = questionContainer.querySelectorAll('*');
-                        for (var j = 0; j < allElements.length; j++) {
-                            var el = allElements[j];
-                            if (el.children.length === 0 && el.textContent.includes(']')) {
-                                // If stripping this element's text reveals our array, hide it
-                                if (el.textContent.replace(/[^0-9\[\],]/g, '').includes(match[0])) {
-                                    el.style.display = 'none';
-                                    break;
-                                }
+                        if (!nameRef.chkd) {
+                            nameRef.chkd = true;
+                            for (let i = 0; i < 9; i++) {
+                                checkAnswer(i, gradeArray[i]);
                             }
+                            board.update();
+                            console.log("Graph updated successfully!");
                         }
+                    } catch (err) {
+                        console.error("Failed to parse matched array:", err);
                     }
-                } catch (err) {
-                    console.log("Found array but failed to parse:", err);
+                } else {
+                    console.log("Regex pattern did NOT find [9 numbers] inside the question text.");
                 }
+            } else {
+                console.error("ERROR: inputEl.closest('.que') returned null! Moodle's outer container class might not be '.que'.");
             }
         }
+    } else {
+        console.warn("WARNING: ans1Ref element not found yet.");
     }
 }, 500);
 
