@@ -200,16 +200,12 @@ try {
     console.log("JSXGraph grading script successfully loaded and started!");
 
     var checkInterval = setInterval(function() {
-        // Use a fallback to find the input element safely
         var inputEl = document.getElementById(ans1Ref) || document.querySelector('input[id*="ans1"]');
         
         if (inputEl) {
-            // Let's see if we detect the readonly state
             var isLocked = inputEl.hasAttribute('readonly') || inputEl.readOnly || inputEl.disabled;
             
             if (isLocked) {
-                console.log("Question is locked/readonly! Searching for feedback...");
-                
                 var questionContainer = inputEl.closest('.que') || document.body;
                 var rawText = questionContainer.textContent;
                 var cleanText = rawText.replace(/[^0-9\[\],]/g, ''); 
@@ -219,24 +215,30 @@ try {
                 if (match) {
                     try {
                         var gradeArray = JSON.parse(match[0]);
-                        console.log("Found and parsed array:", gradeArray);
                         
-                        clearInterval(checkInterval);
+                        // SAFETY CHECK: Ensure this is actually the grading array [0/1, 0/1, ...] 
+                        // and not accidental input reference numbers like [1,2,3,4,50...]
+                        var isValidGradeArray = gradeArray.every(val => val === 0 || val === 1);
                         
-                        if (!nameRef.chkd) {
-                            nameRef.chkd = true;
-                            for (let i = 0; i < 9; i++) {
-                                checkAnswer(i, gradeArray[i]);
+                        if (isValidGradeArray) {
+                            console.log("Found valid grade array!", gradeArray);
+                            clearInterval(checkInterval);
+                            
+                            if (!nameRef.chkd) {
+                                nameRef.chkd = true;
+                                for (let i = 0; i < 9; i++) {
+                                    checkAnswer(i, gradeArray[i]);
+                                }
+                                board.update();
+                                console.log("Graph successfully updated with checkmarks/crosses!");
                             }
-                            board.update();
-                            console.log("Graph successfully updated!");
+                        } else {
+                            // It matched an array, but it was just input IDs. Keep searching.
                         }
+                        
                     } catch (err) {
                         console.error("Parse error:", err);
                     }
-                } else {
-                    // This will print every 500ms while locked until it matches the array pattern
-                    console.log("Locked, but [9 numbers] pattern not found in text yet. Clean text was:", cleanText.substring(0, 50));
                 }
             }
         }
