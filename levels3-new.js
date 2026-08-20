@@ -202,37 +202,38 @@ var checkInterval = setInterval(function() {
     if (inputEl && (inputEl.hasAttribute('readonly') || inputEl.readOnly || inputEl.disabled)) {
         
         var gradeArray = null;
-        var questionContainer = inputEl.closest('.que'); // Confines search to THIS question
+        var questionContainer = inputEl.closest('.que'); 
         
         if (questionContainer) {
             var allElements = questionContainer.querySelectorAll('*');
             
             for (var j = 0; j < allElements.length; j++) {
-                var text = allElements[j].innerText;
+                var el = allElements[j];
                 
-                // Look for the [1,0,1...] pattern
-                if (text && text.trim().startsWith('[') && text.trim().endsWith(']')) {
-                    try {
-                        var parsed = JSON.parse(text.trim());
-                        
-                        if (Array.isArray(parsed) && parsed.length === 9) {
-                            var isAllNumbers = parsed.every(val => typeof val === 'number');
-                            if (isAllNumbers) {
-                                gradeArray = parsed;
-                                
-                                // Hide the array so the student doesn't see it
-                                allElements[j].style.display = 'none'; 
-                                
-                                break; // Found it, stop searching
-                            }
-                        }
-                    } catch (err) {}
+                // Only check "leaf" elements (like your span) that don't have other tags inside them
+                if (el.children.length === 0) {
+                    var text = el.textContent;
+                    
+                    // REGEX: Hunts for EXACTLY 9 numbers separated by commas inside brackets, ignoring RTL marks!
+                    var match = text.match(/\[\s*(?:\d+\s*,\s*){8}\d+\s*\]/);
+                    
+                    if (match) {
+                        try {
+                            // Extract just the exact array string from the match and parse it
+                            gradeArray = JSON.parse(match[0]);
+                            
+                            // Hide the span so the student doesn't see it!
+                            el.style.display = 'none'; 
+                            break; 
+                        } catch (err) {}
+                    }
                 }
             }
         }
 
+        // If we found and parsed the array successfully
         if (gradeArray !== null) {
-            clearInterval(checkInterval); // Stop checking
+            clearInterval(checkInterval); 
             
             if (!nameRef.chkd) {
                 nameRef.chkd = true;
