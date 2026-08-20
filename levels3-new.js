@@ -194,55 +194,59 @@ board.update();
 // tiny editor is removing the id from <span id="{#rqm#}">{#answer#}</span> and will leave the array,
 // tiny doeas not remove class, so to use class i have to correct each question !
 // =========================================================================
-
-// Monitor the STACK inputs to see if Moodle locked them (quiz submitted)
+// Monitor one of your main visible STACK inputs (ans1Ref) to see if Moodle locked it
 var checkInterval = setInterval(function() {
-    var inputEl = document.getElementById(stateRef7);
+    var inputEl = document.getElementById(ans1Ref);
     
+    // Check if the input is locked (quiz submitted)
     if (inputEl && (inputEl.hasAttribute('readonly') || inputEl.readOnly || inputEl.disabled)) {
         
-        var gradeArray = null;
-        var questionContainer = inputEl.closest('.que'); 
+        var questionContainer = inputEl.closest('.que');
         
         if (questionContainer) {
-            var allElements = questionContainer.querySelectorAll('*');
+            // Get all text inside the question, and STRIP OUT all spaces, letters, 
+            // and invisible RTL/LTR characters. Only keep brackets, commas, and numbers.
+            var rawText = questionContainer.textContent;
+            var cleanText = rawText.replace(/[^0-9\[\],]/g, ''); 
             
-            for (var j = 0; j < allElements.length; j++) {
-                var el = allElements[j];
-                
-                // Only check "leaf" elements (like your span) that don't have other tags inside them
-                if (el.children.length === 0) {
-                    var text = el.textContent;
+            // Now look for exactly 9 numbers inside brackets: e.g. [1,0,1,0,0,0,1,1,0]
+            var match = cleanText.match(/\[(?:\d+,){8}\d+\]/);
+            
+            if (match) {
+                try {
+                    // We found the pure array! Parse it.
+                    var gradeArray = JSON.parse(match[0]);
                     
-                    // REGEX: Hunts for EXACTLY 9 numbers separated by commas inside brackets, ignoring RTL marks!
-                    var match = text.match(/\[\s*(?:\d+\s*,\s*){8}\d+\s*\]/);
+                    clearInterval(checkInterval); // Stop checking
                     
-                    if (match) {
-                        try {
-                            // Extract just the exact array string from the match and parse it
-                            gradeArray = JSON.parse(match[0]);
-                            
-                            // Hide the span so the student doesn't see it!
-                            el.style.display = 'none'; 
-                            break; 
-                        } catch (err) {}
+                    if (!nameRef.chkd) {
+                        nameRef.chkd = true;
+                        
+                        // Fire the checkmarks
+                        for (let i = 0; i < 9; i++) {
+                            checkAnswer(i, gradeArray[i]);
+                        }
+                        board.update();
+                        
+                        // Now, hunt down the specific HTML element holding the text and hide it
+                        var allElements = questionContainer.querySelectorAll('*');
+                        for (var j = 0; j < allElements.length; j++) {
+                            var el = allElements[j];
+                            if (el.children.length === 0 && el.textContent.includes(']')) {
+                                // If stripping this element's text reveals our array, hide it
+                                if (el.textContent.replace(/[^0-9\[\],]/g, '').includes(match[0])) {
+                                    el.style.display = 'none';
+                                    break;
+                                }
+                            }
+                        }
                     }
+                } catch (err) {
+                    console.log("Found array but failed to parse:", err);
                 }
-            }
-        }
-
-        // If we found and parsed the array successfully
-        if (gradeArray !== null) {
-            clearInterval(checkInterval); 
-            
-            if (!nameRef.chkd) {
-                nameRef.chkd = true;
-                for (let i = 0; i < 9; i++) {
-                    checkAnswer(i, gradeArray[i]);
-                }
-                board.update();
             }
         }
     }
 }, 500);
+
 [[/jsxgraph]]</span>
