@@ -177,7 +177,7 @@ board.update();
       board.update(); }
   }
 };
-/*
+
 stack_js.get_content({#rqm#}).then((content) => {
 if (content !== null) {
 // As the content is not null this means the span is present so feedback is displayed and we can react to it here
@@ -188,34 +188,6 @@ for (let i = 0; i != 9; i++) {checkAnswer(i,grade[i])};
 console.log(grade);
 board.update();  
 }}});
-*/
-// =========================================================================
-// tiny editor is removing the id from <span id="{#rqm#}">{#answer#}</span> and will leave the array,
-// tiny doeas not remove class, so to use class i have to correct each question !
-// =========================================================================
-// =========================================================================
-// STACK JS CONTENT LOADER WITH FALLBACK
-// =========================================================================
-setTimeout(function() {
-    if (typeof rqm !== 'undefined' && typeof stack_js !== 'undefined') {
-        stack_js.get_content(rqm).then((content) => {
-            if (content !== null && !nameRef.chkd) {
-                nameRef.chkd = true;
-                try {
-                    let grade = JSON.parse(content);
-                    for (let i = 0; i < grade.length; i++) {
-                        checkAnswer(i, grade[i]);
-                    }
-                    board.update();
-                    console.log("Graded successfully via stack_js:", grade);
-                } catch (err) {
-                    console.error("Error parsing content:", err);
-                }
-            }
-        }).catch(function(err) {
-            console.log("stack_js lookup waiting or skipped.");
-        });
-    }
-}, 1000);
+
 
 [[/jsxgraph]]</span>
