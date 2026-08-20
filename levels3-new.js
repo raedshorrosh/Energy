@@ -196,37 +196,30 @@ board.update();
 // =========================================================================
 // Monitor one of your main visible STACK inputs (ans1Ref) to see if Moodle locked it
 // Monitor the STACK input to see when it locks
-var checkInterval = setInterval(function() {
-    var inputEl = document.getElementById(ans1Ref);
-    
-    if (inputEl) {
-        // DEBUG 1: Is it finding the input, and is it readonly/disabled?
-        // (Uncomment the line below if you want to flood your console to test the read-only state)
-        // console.log("Input found. Readonly:", inputEl.hasAttribute('readonly') || inputEl.readOnly || inputEl.disabled);
+try {
+    console.log("JSXGraph grading script successfully loaded and started!");
+
+    var checkInterval = setInterval(function() {
+        // Use a fallback to find the input element safely
+        var inputEl = document.getElementById(ans1Ref) || document.querySelector('input[id*="ans1"]');
         
-        if (inputEl.hasAttribute('readonly') || inputEl.readOnly || inputEl.disabled) {
+        if (inputEl) {
+            // Let's see if we detect the readonly state
+            var isLocked = inputEl.hasAttribute('readonly') || inputEl.readOnly || inputEl.disabled;
             
-            var questionContainer = inputEl.closest('.que');
-            
-            // DEBUG 2: Let's see what questionContainer captured!
-            console.log("questionContainer found (.que):", questionContainer);
-            
-            if (questionContainer) {
-                // DEBUG 3: Let's see all text content inside this specific question block
-                console.log("Question text content:", questionContainer.textContent);
+            if (isLocked) {
+                console.log("Question is locked/readonly! Searching for feedback...");
                 
+                var questionContainer = inputEl.closest('.que') || document.body;
                 var rawText = questionContainer.textContent;
                 var cleanText = rawText.replace(/[^0-9\[\],]/g, ''); 
                 
-                console.log("Cleaned text for matching:", cleanText);
-                
                 var match = cleanText.match(/\[(?:\d+,){8}\d+\]/);
-                console.log("Regex match result:", match);
                 
                 if (match) {
                     try {
                         var gradeArray = JSON.parse(match[0]);
-                        console.log("Parsed grade array successfully:", gradeArray);
+                        console.log("Found and parsed array:", gradeArray);
                         
                         clearInterval(checkInterval);
                         
@@ -236,21 +229,21 @@ var checkInterval = setInterval(function() {
                                 checkAnswer(i, gradeArray[i]);
                             }
                             board.update();
-                            console.log("Graph updated successfully!");
+                            console.log("Graph successfully updated!");
                         }
                     } catch (err) {
-                        console.error("Failed to parse matched array:", err);
+                        console.error("Parse error:", err);
                     }
                 } else {
-                    console.log("Regex pattern did NOT find [9 numbers] inside the question text.");
+                    // This will print every 500ms while locked until it matches the array pattern
+                    console.log("Locked, but [9 numbers] pattern not found in text yet. Clean text was:", cleanText.substring(0, 50));
                 }
-            } else {
-                console.error("ERROR: inputEl.closest('.que') returned null! Moodle's outer container class might not be '.que'.");
             }
         }
-    } else {
-        console.warn("WARNING: ans1Ref element not found yet.");
-    }
-}, 500);
+    }, 500);
+
+} catch (e) {
+    console.error("FATAL ERROR in grading script setup:", e);
+}
 
 [[/jsxgraph]]</span>
