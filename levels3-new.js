@@ -138,7 +138,7 @@ let correctMark =
     '<span style="font-size:1.5em; color:green;">✔ </span>';
 
 let incorrectMark =
-    '<span style="font-size:0.5em; color:red;">❌ </span>';
+    '<span style="font-size:1.0em; color:red;">❌ </span>';
 
 
 // Same tolerance used by the STACK PRTs.
