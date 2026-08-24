@@ -248,12 +248,21 @@ if (isless(temp,3)) {mark[2*jmax]=markC} else {mark[2*jmax]=markF};
 board.update(); 
 };
 
-stack_js.get_content({#rqm#}).then((content) => {
-if (content !== null) {
-// As the content is not null this means the span is present so feedback is displayed and we can react to it here
-if  (!answered ) {
-answered=true;
-checkAnswer();
-}}});
+// ------------------------------------------------------------------
+// ONE-TIME READONLY TRIGGER.
+// STACK has checked the response when the hidden states input is readonly.
+// No feedback-span dependency and no polling.
+// ------------------------------------------------------------------
+var markingTriggerInput = ans;
+
+if (
+  markingTriggerInput &&
+  markingTriggerInput.hasAttribute('readonly')
+) {
+  if (!answered) {
+    answered = true;
+    checkAnswer();
+  }
+}
 
 [[/jsxgraph]]
