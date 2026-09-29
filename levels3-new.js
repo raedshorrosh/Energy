@@ -149,11 +149,6 @@ const isClose = function(a, b) {
 };
 
 
-// Correct energy levels.
-const yTop    = {#top_line#};
-const yMid    = {#top_line#} - {#gap#};
-const yBottom = {#top_line#} - {#gap#} - {#gap2#};
-
 
 // ------------------------------------------------------------
 // Existing visual marking function
@@ -216,21 +211,21 @@ function markGraph() {
     const grade = [
 
         // Arrow ΔH_I
-        isClose(a_arp1.Y(), yMid)    ? 1 : 0,
-        isClose(b_arp1.Y(), yBottom) ? 1 : 0,
+        isClose(a_arp1.Y(), {#ta1[2]#})    ? 1 : 0,
+        isClose(b_arp1.Y(), {#ta2[2]#}) ? 1 : 0,
 
         // Arrow ΔH_II
-        isClose(a_arp2.Y(), yMid)    ? 1 : 0,
-        isClose(b_arp2.Y(), yTop)    ? 1 : 0,
+        isClose(a_arp2.Y(), {#ta3[2]#})    ? 1 : 0,
+        isClose(b_arp2.Y(),{#ta4[2]#})    ? 1 : 0,
 
         // Arrow ΔH_(H-F)
-        isClose(a_arp3.Y(), yBottom) ? 1 : 0,
-        isClose(b_arp3.Y(), yTop)    ? 1 : 0,
+        isClose(a_arp3.Y(), {#ta50[2]#}) ? 1 : 0,
+        isClose(b_arp3.Y(), {#ta51[2]#})    ? 1 : 0,
 
         // Text positions
-        isClose(reactBot.Y(), yBottom) ? 1 : 0,
-        isClose(reactMid.Y(), yMid)    ? 1 : 0,
-        isClose(reactTop.Y(), yTop)    ? 1 : 0
+        isClose(reactBot.Y(), {#ta5_y#}) ? 1 : 0,
+        isClose(reactMid.Y(), {#ta6_y#})    ? 1 : 0,
+        isClose(reactTop.Y(), {#ta7_y#})    ? 1 : 0
     ];
 
     // Freeze everything.
