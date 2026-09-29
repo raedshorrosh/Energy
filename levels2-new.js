@@ -95,8 +95,8 @@ var answered1=0,answered2=0,answered3=0,answered4=0;
 // All four PRTs use NumAbsolute with tolerance 0.1.
 // ------------------------------------------------------------------
 var markTolerance = 0.1;
-var targetArrowStart = {#A#};
-var targetArrowEnd   = {#B#};
+var targetArrowStart = {#ta1[2]#};
+var targetArrowEnd   = {#ta2[2]#};
 var targetReactants  = {#ta5_y#};
 var targetProducts   = {#ta6_y#};
 
